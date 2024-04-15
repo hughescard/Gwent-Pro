@@ -3,7 +3,23 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Melee_Zone
+  - Distance_Zone
+  - Siege_Zone
+  - Weather_Zone
+  - Hand_Zone
+  - Hand_Zone_Enemy
+  - Melee_Zone_Enemy
+  - Distance_Zone_Enemy
+  - Siege_Zone_Enemy
+  - Raise_Zone_Enemy_2
+  - Raise_Zone_Enemy_1
+  - Raise_Zone_Enemy_3
+  - Raise_Zone_1
+  - Raise_Zone_2
+  - Raise_Zone_3
+  - Card
   layers:
   - Default
   - TransparentFX
