@@ -12,9 +12,10 @@ public class Scr_Card : ScriptableObject
     public string playable_zone;
     public string effect;
     public string card_type;
+    public bool player;
 
     //card constructor
-    public Scr_Card(string name, string card_type, Sprite image, int power, string playable_zone, string effect)
+    public Scr_Card(string name, string card_type, bool player, Sprite image, int power, string playable_zone, string effect)
     {
         this.name = name;
         this.image = image;
@@ -23,6 +24,7 @@ public class Scr_Card : ScriptableObject
         this.playable_zone = playable_zone;
         this.effect = effect;
         this.card_type = card_type;
+        this.player = player;
     }
 
 

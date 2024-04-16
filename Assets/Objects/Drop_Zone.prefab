@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 2744612301679134590}
   - component: {fileID: 7104396198702142452}
   - component: {fileID: 2833418748233964469}
+  - component: {fileID: 1440336211923137249}
   m_Layer: 5
   m_Name: Drop_Zone
-  m_TagString: Untagged
+  m_TagString: S
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -133,7 +134,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.932251, y: -0.06780243}
+  m_Offset: {x: 0.27697754, y: 1.2427521}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -144,5 +145,20 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 816.8418, y: 109.77675}
+  m_Size: {x: 815.53125, y: 70.45999}
   m_EdgeRadius: 0
+--- !u!114 &1440336211923137249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4447172516751671112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8002fc4f9a0fc34ea9ebe0fc5ed34e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  board_side: 0
+  weather_effects: 0
+  raise_effects: 0

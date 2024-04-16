@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 977473431661804444, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}
       propertyPath: m_Name
-      value: CardPrefab Variant
+      value: LeaderPrefab
       objectReference: {fileID: 0}
     - target: {fileID: 3445114250830608659, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}
       propertyPath: m_Pivot.x
@@ -92,7 +92,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -4162034361825544782, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}
+    - {fileID: -1694496657896318766, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}
+    - {fileID: -6726058570287579273, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
