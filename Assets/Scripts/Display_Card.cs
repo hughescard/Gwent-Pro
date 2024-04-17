@@ -9,12 +9,12 @@ public class Display_Card : MonoBehaviour
     public Image Image;
     public TextMeshProUGUI Current_Power;
     public Scr_Card Card;
-    
+
     // Update is called once per frame
     void Update()
     {
-        
-        if (Card != null )
+
+        if (Card != null)
         {
             Image.sprite = Card.image;
             if (Card.current_power != 0)
@@ -26,9 +26,9 @@ public class Display_Card : MonoBehaviour
                 Current_Power.text = "";
             }
 
-            
-        }
-        
 
-    }
+        }
+
+
+    } 
 }

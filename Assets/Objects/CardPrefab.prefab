@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3445114250830608659}
   - component: {fileID: 8326029235161801487}
   - component: {fileID: -6726058570287579273}
+  - component: {fileID: 6550464816514231545}
   - component: {fileID: -1694496657896318766}
   - component: {fileID: 3801944138517308390}
   - component: {fileID: 4931364276426749047}
@@ -28,7 +29,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 977473431661804444}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -7.2528625}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -70,6 +71,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Played: 0
+--- !u!114 &6550464816514231545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977473431661804444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cea16bf8bd59b045a4af29a21809ae4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Card_prefab: {fileID: 977473431661804444}
 --- !u!114 &-1694496657896318766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -106,6 +120,38 @@ MonoBehaviour:
         - m_Target: {fileID: -6726058570287579273}
           m_TargetAssemblyTypeName: Scr_Drag, Assembly-CSharp
           m_MethodName: End_Drag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6550464816514231545}
+          m_TargetAssemblyTypeName: Scr_ZoomCard, Assembly-CSharp
+          m_MethodName: Pointer_on_Card
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 6550464816514231545}
+          m_TargetAssemblyTypeName: Scr_ZoomCard, Assembly-CSharp
+          m_MethodName: Pointer_out_Card
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

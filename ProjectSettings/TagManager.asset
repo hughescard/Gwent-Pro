@@ -8,11 +8,12 @@ TagManager:
   - D
   - S
   - W
-  - RD
-  - RM
-  - RS
   - L
   - H
+  - Card
+  - Rm
+  - Rd
+  - Rs
   layers:
   - Default
   - TransparentFX
