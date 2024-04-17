@@ -12,6 +12,12 @@ public class Scr_Drag : MonoBehaviour
     private List<GameObject> Colliding_Zones = new List<GameObject>();
     Display_Card Current_Card;
     bool dragged_trial = false;
+    private Scr_Effects effects;
+    
+    public void Awake()
+    {
+        effects = GameObject.Find("Game_Manager").GetComponent<Scr_Effects>();
+    }
     public void Begin_Drag()
     {
         Scr_Game_Manager Prov_GM = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
@@ -36,6 +42,12 @@ public class Scr_Drag : MonoBehaviour
             Colliding_Zone = Is_Correct_Zone(Current_Card);
             if (Colliding_Zone != null)
             {
+                if(Current_Card.Card.effect != "")
+                    effects.effects[Current_Card.Card.effect](Current_Card.Card);
+               else if(Current_Card.Card.card_type == "U")
+                    effects.effects["Play_Card"](Current_Card.Card);
+
+
                 Dragged = false;
                 transform.SetParent(Colliding_Zone.transform, false);
                 Played = true;
