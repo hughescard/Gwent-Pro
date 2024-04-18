@@ -8,7 +8,14 @@ public class Scr_DropZone : MonoBehaviour
     public int weather_effects;
     public int raise_effects;
 
-
+    public void Power_Modifier()
+    {
+        foreach(Transform obj in this.transform)
+        {
+            Display_Card obj_display_card = obj.GetComponent<Display_Card>();
+            obj_display_card.Card.current_power = obj_display_card.Card.real_power - this.weather_effects + this.raise_effects;
+        }
+    }
 
 
 }

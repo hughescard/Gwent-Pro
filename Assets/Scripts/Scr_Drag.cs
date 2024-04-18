@@ -47,16 +47,19 @@ public class Scr_Drag : MonoBehaviour
                else if(Current_Card.Card.card_type == "U")
                     effects.effects["Play_Card"](Current_Card.Card);
 
-
                 Dragged = false;
                 transform.SetParent(Colliding_Zone.transform, false);
-                Played = true;
                 dragged_trial = false;
+                Played = true;
+
                 GameObject Prov_Gm = GameObject.Find("Game_Manager");
 
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Continuous_Passes=0;
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Power_Update();
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Change_Turn();
+
+                if (Current_Card.Card.card_type == "C")
+                    Destroy(gameObject);
             }
 
             else

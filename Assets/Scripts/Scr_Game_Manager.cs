@@ -14,14 +14,14 @@ public class Scr_Game_Manager : MonoBehaviour
     public List<GameObject> Principal_Objects;
     public int round = 0;
     public int Continuous_Passes = 0;
-    Scr_Deck Deck1;
-    Scr_Deck Deck2;
+    public Scr_Deck Deck1;
+    public Scr_Deck Deck2;
     int total_power_p1;
     int total_power_p2;
     public TextMeshProUGUI total_power_p1_t;
     public TextMeshProUGUI total_power_p2_t;
     bool Change_round;
-
+    public List<Scr_DropZone> Drop_Zones;
 
     void Start()
     {
@@ -108,7 +108,8 @@ public class Scr_Game_Manager : MonoBehaviour
         if (this.Continuous_Passes == 2)
         {
             //primero debe verificarse si con esta ronda se acaba el juego 
-            if (total_power_p1 > total_power_p2)//gana jugador 1
+            //gana jugador 1
+            if (total_power_p1 > total_power_p2)
             {
                 Player2.Lives--;
                 Destroy(Principal_Objects[11].transform.GetChild(0).gameObject);
@@ -120,7 +121,8 @@ public class Scr_Game_Manager : MonoBehaviour
                 }
             }
 
-            else if (total_power_p2 > total_power_p1)//gana jugador 2
+            //gana jugador 2
+            else if (total_power_p2 > total_power_p1)
             {
                 Player1.Lives--;
                 Destroy(Principal_Objects[10].transform.GetChild(0).gameObject);
@@ -132,6 +134,7 @@ public class Scr_Game_Manager : MonoBehaviour
                 }
             }
 
+            //empate
             else
             {
                 Player1.Lives--;
@@ -179,6 +182,11 @@ public class Scr_Game_Manager : MonoBehaviour
 
                     Destroy(obj);
                 }
+            }
+
+            foreach(Scr_DropZone dropzone in Drop_Zones)
+            {
+                dropzone.weather_effects = 0;
             }
 
             Change_round = true;
@@ -229,22 +237,22 @@ public class Scr_Game_Manager : MonoBehaviour
 
         //aqui se ejecuta la actualizacion del poder acumulado por el jugador 1 
         #region //Jugador 1
-        foreach (Transform obj in GameObject.Find("Melee_Zone").transform)
+        foreach (Transform obj in Drop_Zones[2].transform)
             total_power_p1 += obj.GetComponent<Display_Card>().Card.current_power;
-        foreach (Transform obj in GameObject.Find("Distance_Zone").transform)
+        foreach (Transform obj in Drop_Zones[1].transform)
             total_power_p1 += obj.GetComponent<Display_Card>().Card.current_power;
-        foreach (Transform obj in GameObject.Find("Siege_Zone").transform)
+        foreach (Transform obj in Drop_Zones[0].transform)
             total_power_p1 += obj.GetComponent<Display_Card>().Card.current_power;
 
         #endregion
 
         //aqui se ejecuta la actualizacion de poder acumulado por el jugador 2
         #region//Jugador 2
-      foreach (Transform obj in GameObject.Find("Melee_Zone_Enemy").transform)
+      foreach (Transform obj in Drop_Zones[3].transform)
             total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
-        foreach (Transform obj in GameObject.Find("Distance_Zone_Enemy").transform)
+        foreach (Transform obj in Drop_Zones[5].transform)
             total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
-        foreach (Transform obj in GameObject.Find("Siege_Zone_Enemy").transform)
+        foreach (Transform obj in Drop_Zones[4].transform)
             total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
 
         #endregion
