@@ -12,8 +12,11 @@ public class Scr_DropZone : MonoBehaviour
     {
         foreach(Transform obj in this.transform)
         {
-            Display_Card obj_display_card = obj.GetComponent<Display_Card>();
-            obj_display_card.Card.current_power = obj_display_card.Card.real_power - this.weather_effects + this.raise_effects;
+            if(obj.GetComponent<Display_Card>().Card.card_type != "D")
+            {
+                Display_Card obj_display_card = obj.GetComponent<Display_Card>();
+                obj_display_card.Card.current_power = obj_display_card.Card.real_power - this.weather_effects + this.raise_effects;
+            }
         }
     }
 

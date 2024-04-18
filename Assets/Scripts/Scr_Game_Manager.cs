@@ -6,6 +6,17 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
+/// <summary>
+/// arreglar en el decoy que se esta cambiando por cartas del enemigo 
+/// 
+/// </summary>
+
+
+
+
+
+
 public class Scr_Game_Manager : MonoBehaviour
 {
     public Scr_Player Player1;
@@ -89,20 +100,18 @@ public class Scr_Game_Manager : MonoBehaviour
     {
         obj.transform.Rotate(0, 0, 180);
     }
-
     public void Change_Turn()
     {
         turn = !turn;
         foreach (GameObject obj in Principal_Objects)
         {
-            if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy") continue;
+            if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
 
             Rotate_Object(obj);
         }
 
         Power_Update();
     }
-
     public void Change_Round()
     {
         if (this.Continuous_Passes == 2)
@@ -187,6 +196,8 @@ public class Scr_Game_Manager : MonoBehaviour
             foreach(Scr_DropZone dropzone in Drop_Zones)
             {
                 dropzone.weather_effects = 0;
+                dropzone.raise_effects = 0;
+
             }
 
             Change_round = true;
@@ -200,7 +211,6 @@ public class Scr_Game_Manager : MonoBehaviour
 
         }
     }
-
     public void Passed()
     {
         if(Player1.Board_Side == this.turn)
@@ -216,10 +226,7 @@ public class Scr_Game_Manager : MonoBehaviour
 
         Change_Turn();
         Change_Round();
-    }
-
-    
-
+    }  
     public void Power_Update()
     {
         total_power_p1 = 0;
@@ -238,22 +245,41 @@ public class Scr_Game_Manager : MonoBehaviour
         //aqui se ejecuta la actualizacion del poder acumulado por el jugador 1 
         #region //Jugador 1
         foreach (Transform obj in Drop_Zones[2].transform)
+            if (obj.GetComponent<Display_Card>().Card.card_type == "D") continue;
+            else 
             total_power_p1 += obj.GetComponent<Display_Card>().Card.current_power;
+
+
         foreach (Transform obj in Drop_Zones[1].transform)
+            if (obj.GetComponent<Display_Card>().Card.card_type == "D") continue;
+            else    
             total_power_p1 += obj.GetComponent<Display_Card>().Card.current_power;
+        
         foreach (Transform obj in Drop_Zones[0].transform)
+            if (obj.GetComponent<Display_Card>().Card.card_type == "D") continue;
+            else    
             total_power_p1 += obj.GetComponent<Display_Card>().Card.current_power;
 
         #endregion
 
         //aqui se ejecuta la actualizacion de poder acumulado por el jugador 2
         #region//Jugador 2
-      foreach (Transform obj in Drop_Zones[3].transform)
-            total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
+        foreach (Transform obj in Drop_Zones[3].transform)
+            if (obj.GetComponent<Display_Card>().Card.card_type == "D") continue;
+            else
+                total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
+        
+        
         foreach (Transform obj in Drop_Zones[5].transform)
-            total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
+            if (obj.GetComponent<Display_Card>().Card.card_type == "D") continue;
+            else
+                total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
+        
+        
         foreach (Transform obj in Drop_Zones[4].transform)
-            total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
+            if (obj.GetComponent<Display_Card>().Card.card_type == "D") continue;
+            else
+                total_power_p2 += obj.GetComponent<Display_Card>().Card.current_power;
 
         #endregion
     

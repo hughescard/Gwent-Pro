@@ -42,9 +42,38 @@ public class Scr_Drag : MonoBehaviour
             Colliding_Zone = Is_Correct_Zone(Current_Card);
             if (Colliding_Zone != null)
             {
+                if(Current_Card.Card.card_type == "D")
+                {
+                   
+                    Display_Card Exchange = Colliding_Zone.GetComponent<Display_Card>();
+                    Transform drop = Colliding_Zone.transform.parent;
+                    transform.SetParent(drop, false);
+                    Exchange.Card.current_power = Exchange.Card.real_power;
+                    Exchange.gameObject.GetComponent<Scr_Drag>().Played = false;
+                    if(Exchange.Card.player)
+                        Colliding_Zone.transform.SetParent(GameObject.Find("Hand_Zone").transform, false);
+                    else if(!Exchange.Card.player)
+                        Colliding_Zone.transform.SetParent(GameObject.Find("Hand_Zone_Enemy").transform, false);
+
+                    effects.Decoy(Exchange.Card,Exchange);
+
+                    Dragged = false;
+                    dragged_trial = false;
+                    Played = true;
+
+                    GameObject Prov_GM = GameObject.Find("Game_Manager");
+
+                    Prov_GM.GetComponent<Scr_Game_Manager>().Continuous_Passes = 0;
+                    Prov_GM.GetComponent<Scr_Game_Manager>().Power_Update();
+                    Prov_GM.GetComponent<Scr_Game_Manager>().Change_Turn();
+
+                    return;
+                }
+
                 if(Current_Card.Card.effect != "")
                     effects.effects[Current_Card.Card.effect](Current_Card.Card);
-               else if(Current_Card.Card.card_type == "U")
+
+                else if(Current_Card.Card.card_type == "U")
                     effects.effects["Play_Card"](Current_Card.Card);
 
                 Dragged = false;
@@ -78,7 +107,11 @@ public class Scr_Drag : MonoBehaviour
         {
             if(droppable_zone.tag == "W" )//si es una dropzone de clima
             {
-                if (Current_Card.Card.playable_zone.IndexOf(droppable_zone.tag) != -1 && droppable_zone.transform.childCount < 3)//verificar si el rango de la carta es parte de la zona en que esta colisionando y si no esta llena ya la zona 
+                if(Current_Card.Card.card_type == "C" && Current_Card.Card.playable_zone.IndexOf(droppable_zone.tag) != -1)
+                {
+                    return droppable_zone;
+                }
+                else if (Current_Card.Card.playable_zone.IndexOf(droppable_zone.tag) != -1 && droppable_zone.transform.childCount < 3)//verificar si el rango de la carta es parte de la zona en que esta colisionando y si no esta llena ya la zona 
                 {
                     return droppable_zone;
                 }
@@ -114,7 +147,15 @@ public class Scr_Drag : MonoBehaviour
                     return droppable_zone;
                 }
             }
-            
+            else if(droppable_zone.tag == "Card")
+            {
+                if (Current_Card.Card.playable_zone == droppable_zone.tag && droppable_zone.GetComponent<Scr_DropZone>().board_side == Current_Card.Card.player)//verificar si el rango de la carta es parte de la zona en que esta colisionando y si no esta llena ya la zona 
+                {
+                    return droppable_zone;
+                }
+            }
+
+
         }
 
         return null;//las zonas con las q estaba colisionando no son validas
@@ -122,9 +163,14 @@ public class Scr_Drag : MonoBehaviour
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        //Is_Over_Zone = true;
-        //Colliding_Zone = collision.gameObject;
-        Colliding_Zones.Insert(0, collision.gameObject); 
+        if(Current_Card.Card.card_type == "D")
+        {
+            if (collision.gameObject.tag == "Card")
+                Colliding_Zones.Insert(0, collision.gameObject);
+        }
+       
+        else
+            Colliding_Zones.Insert(0, collision.gameObject); 
     }
 
     public void OnCollisionExit2D(Collision2D collision)

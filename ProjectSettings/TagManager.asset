@@ -14,6 +14,7 @@ TagManager:
   - Rm
   - Rd
   - Rs
+  - LeaderCard
   layers:
   - Default
   - TransparentFX

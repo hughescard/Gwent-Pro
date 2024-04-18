@@ -17,7 +17,7 @@ public class Display_Card : MonoBehaviour
         if (Card != null)
         {
             Image.sprite = Card.image;
-            if (Card.current_power != 0)
+            if (Card.current_power > 0)
             {
                 Current_Power.text = Card.current_power.ToString();
             }

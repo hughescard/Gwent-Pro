@@ -20,9 +20,9 @@ public class Scr_Card_DataBase : MonoBehaviour
             C_and_R_Deck.Add(new Scr_Card("Mejoras de Combate", "Rm", jugador, Resources.Load<Sprite>("Spr_Mejoras_de_Combate"), 0, "Rm", "Increase", "U"));
             C_and_R_Deck.Add(new Scr_Card("Potenciador de Largo Alcance", "Rd", jugador, Resources.Load<Sprite>("Spr_Potenciador_de_Largo_Alcance"), 0, "Rd", "Increase", "U"));
             C_and_R_Deck.Add(new Scr_Card("Escudo Energético Reforzado", "Rs", jugador, Resources.Load<Sprite>("Spr_Escudo_Energetico_Reforzado"), 0, "Rs", "Increase", "U"));
-            C_and_R_Deck.Add(new Scr_Card("Señuelo Táctico", "D", jugador, Resources.Load<Sprite>("Spr_Senuelo_Tactico"), 0, "MDS", "", "U"));
-            C_and_R_Deck.Add(new Scr_Card("Señuelo de Despliegue", "D", jugador, Resources.Load<Sprite>("Spr_Senuelo_de_Despliegue"), 0, "MDS", "", "U"));
-            C_and_R_Deck.Add(new Scr_Card("Señuelo de Engaño", "D", jugador, Resources.Load<Sprite>("Spr_Senuelo_de_Engano"), 0, "MDS", "", "U"));
+            C_and_R_Deck.Add(new Scr_Card("Señuelo Táctico", "D", jugador, Resources.Load<Sprite>("Spr_Senuelo_Tactico"), 0, "Card", "Decoy", "U"));
+            C_and_R_Deck.Add(new Scr_Card("Señuelo de Despliegue", "D", jugador, Resources.Load<Sprite>("Spr_Senuelo_de_Despliegue"), 0, "Card", "Decoy", "U"));
+            C_and_R_Deck.Add(new Scr_Card("Señuelo de Engaño", "D", jugador, Resources.Load<Sprite>("Spr_Senuelo_de_Engano"), 0, "Card", "Decoy", "U"));
             C_and_R_Deck.Add(new Scr_Card("Soldado de Asalto Cibernético", "U", jugador, Resources.Load<Sprite>("Spr_Soldado_de_Asalto_Cibernetico"), 3, "M", "", "U"));
             C_and_R_Deck.Add(new Scr_Card("Francotirador de Precisión Óptica", "U", jugador, Resources.Load<Sprite>("Spr_Francotirador_de_Precision_Optica"), 4, "D", "", "U"));
             C_and_R_Deck.Add(new Scr_Card("Tanque de Asedio Blindado", "U", jugador, Resources.Load<Sprite>("Spr_Tanque_de_Asedio_Blindado"), 5, "S", "", "U"));
@@ -53,9 +53,9 @@ public class Scr_Card_DataBase : MonoBehaviour
                 CM_Deck.Add(new Scr_Card("Grito de Batalla", "Rm", jugador, Resources.Load<Sprite>("Spr_Grito_de_Batalla"), 0, "Rm", "Increase", "U"));
                 CM_Deck.Add(new Scr_Card("Bendición_del_Clero", "Rd", jugador, Resources.Load<Sprite>("Spr_Bendicion_del_Clero"), 0, "Rd", "Increase", "U"));
                 CM_Deck.Add(new Scr_Card("Estrategia de Vanguardia", "Rs", jugador, Resources.Load<Sprite>("Spr_Estrategia_de_Vanguardia"), 0, "Rs", "Increase", "U"));
-                CM_Deck.Add(new Scr_Card("Caballero_Fantasma", "D", jugador, Resources.Load<Sprite>("Spr_Caballero_Fantasma"), 0, "MDS", "", "U"));
-                CM_Deck.Add(new Scr_Card("Arquero Emboscado", "D", jugador, Resources.Load<Sprite>("Spr_Arquero_Emboscado"), 0, "MDS", "", "U"));
-                CM_Deck.Add(new Scr_Card("Emboscada de la Vanguardia", "D", jugador, Resources.Load<Sprite>("Spr_Emboscada_de_la_Vanguardia"), 0, "MDS", "", "U"));
+                CM_Deck.Add(new Scr_Card("Caballero_Fantasma", "D", jugador, Resources.Load<Sprite>("Spr_Caballero_Fantasma"), 0, "Card", "Decoy", "U"));
+                CM_Deck.Add(new Scr_Card("Arquero Emboscado", "D", jugador, Resources.Load<Sprite>("Spr_Arquero_Emboscado"), 0, "Card", "Decoy", "U"));
+                CM_Deck.Add(new Scr_Card("Emboscada de la Vanguardia", "D", jugador, Resources.Load<Sprite>("Spr_Emboscada_de_la_Vanguardia"), 0, "Card", "Decoy", "U"));
                 CM_Deck.Add(new Scr_Card("Caballero de la Mesa Redonda", "U", jugador, Resources.Load<Sprite>("Spr_Caballero_de_la_Mesa_Redonda"), 4, "M", "", "U"));
                 CM_Deck.Add(new Scr_Card("Arquero de Sherwood", "U", jugador, Resources.Load<Sprite>("Spr_Arquero_de_Sherwood"), 3, "D", "", "U"));
                 CM_Deck.Add(new Scr_Card("Catapulta de Asedio", "U", jugador, Resources.Load<Sprite>("Spr_Catapulta_de_Asedio"), 5, "S", "", "U"));

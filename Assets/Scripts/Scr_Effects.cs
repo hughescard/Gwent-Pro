@@ -16,7 +16,7 @@ public class Scr_Effects : MonoBehaviour
             { "Weather" , Weather },
             { "Play_Card" , Play_Card },
             { "Clear" , Clear },
-            { "Increase" , Increase }
+            { "Increase" , Increase },
         };    
     }
 
@@ -336,6 +336,91 @@ public class Scr_Effects : MonoBehaviour
                 }
             }
 
+        }
+    }
+    public void Decoy(Scr_Card card , Display_Card card_display)
+    {
+        if(card.playable_zone == "W")
+        {
+            if (card_display.Card.card_type == "WM")
+            {
+                if (Main_Objects[1].GetComponent<Scr_DropZone>().weather_effects != 0)
+                Main_Objects[1].GetComponent<Scr_DropZone>().weather_effects--;
+                if (Main_Objects[4].GetComponent<Scr_DropZone>().weather_effects != 0)
+                Main_Objects[4].GetComponent<Scr_DropZone>().weather_effects--;
+
+            }
+            else if (card_display.Card.card_type == "WD")
+            {
+                if (Main_Objects[2].GetComponent<Scr_DropZone>().weather_effects != 0) 
+                Main_Objects[2].GetComponent<Scr_DropZone>().weather_effects--;
+                if (Main_Objects[5].GetComponent<Scr_DropZone>().weather_effects != 0) 
+                Main_Objects[5].GetComponent<Scr_DropZone>().weather_effects--;
+
+            }
+            else if (card_display.Card.card_type == "WS")
+            {
+                if (Main_Objects[3].GetComponent<Scr_DropZone>().weather_effects != 0) 
+                Main_Objects[3].GetComponent<Scr_DropZone>().weather_effects--;
+                if (Main_Objects[6].GetComponent<Scr_DropZone>().weather_effects != 0) 
+                Main_Objects[6].GetComponent<Scr_DropZone>().weather_effects--;
+
+            }
+
+            for (int i = 1; i <= 6; i++)
+            {
+                if (Main_Objects[i].GetComponent<Scr_DropZone>() != null)
+                    Main_Objects[i].GetComponent<Scr_DropZone>().Power_Modifier();
+            }
+
+            Main_Objects[0].GetComponent<Scr_Game_Manager>().Power_Update();
+        }
+
+        else if (card.playable_zone == "Rm" || card.playable_zone == "Rd" || card.playable_zone == "Rs")
+        {
+            if(card.playable_zone == "Rm") 
+            {
+                if(card.player)
+                {
+                    Main_Objects[1].GetComponent<Scr_DropZone>().raise_effects--;
+                }
+                else
+                {
+                    Main_Objects[4].GetComponent<Scr_DropZone>().raise_effects--;
+                }
+            }
+
+            else if (card.playable_zone == "Rd")
+            {
+                if (card.player)
+                {
+                    Main_Objects[2].GetComponent<Scr_DropZone>().raise_effects--;
+                }
+                else
+                {
+                    Main_Objects[5].GetComponent<Scr_DropZone>().raise_effects--;
+                }
+            }
+            
+            else if (card.playable_zone == "Rs")
+            {
+                if (card.player)
+                {
+                    Main_Objects[3].GetComponent<Scr_DropZone>().raise_effects--;
+                }
+                else
+                {
+                    Main_Objects[6].GetComponent<Scr_DropZone>().raise_effects--;
+                }
+            }
+
+            for (int i = 1; i <= 6; i++)
+            {
+                if (Main_Objects[i].GetComponent<Scr_DropZone>() != null)
+                    Main_Objects[i].GetComponent<Scr_DropZone>().Power_Modifier();
+            }
+
+            Main_Objects[0].GetComponent<Scr_Game_Manager>().Power_Update();
         }
     }
 }
