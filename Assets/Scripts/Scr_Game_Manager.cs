@@ -27,11 +27,15 @@ public class Scr_Game_Manager : MonoBehaviour
     public int Continuous_Passes = 0;
     public Scr_Deck Deck1;
     public Scr_Deck Deck2;
-    int total_power_p1;
-    int total_power_p2;
+    public int total_power_p1;
+    public int total_power_p2;
     public TextMeshProUGUI total_power_p1_t;
     public TextMeshProUGUI total_power_p2_t;
-    bool Change_round;
+    public bool Change_round;
+    bool Change_round_2;
+    private bool Winp1 = false;
+    private bool Winp2 = false;
+
     public List<Scr_DropZone> Drop_Zones;
 
     void Start()
@@ -102,7 +106,56 @@ public class Scr_Game_Manager : MonoBehaviour
     }
     public void Change_Turn()
     {
-        turn = !turn;
+        if(Change_round_2)
+        {
+            if (Winp1)
+            {
+                Winp1 = false;
+                if (turn == false)
+                {
+                    foreach (GameObject obj in Principal_Objects)
+                    {
+                        if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                        Rotate_Object(obj);
+                    }
+                    turn = true;
+                }
+                Change_round_2 = false;
+                total_power_p1 = 0;
+                total_power_p2 = 0;
+                total_power_p1_t.text = "0";
+                total_power_p2_t.text = "0";
+                return;
+            }
+
+            else if (Winp2)
+            {
+                Winp2 = false;
+                if (turn==true)
+                {
+                    foreach (GameObject obj in Principal_Objects)
+                    {
+                        if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                        Rotate_Object(obj);
+                    }
+                    turn = false;
+                }
+                Change_round_2 = false;
+                total_power_p1 = 0;
+                total_power_p2 = 0;
+                total_power_p1_t.text = "0";
+                total_power_p2_t.text = "0";
+                return;
+            }
+
+            //Power_Update();
+            //Change_round_2 = false;
+            //return;
+        }
+
+        turn = !turn;     
         foreach (GameObject obj in Principal_Objects)
         {
             if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
@@ -197,12 +250,16 @@ public class Scr_Game_Manager : MonoBehaviour
             {
                 dropzone.weather_effects = 0;
                 dropzone.raise_effects = 0;
-
             }
 
             Change_round = true;
+            Change_round_2 = true;
+            if (total_power_p1 >= total_power_p2) Winp1 = true;
+            else if(total_power_p2 > total_power_p1)Winp2 = true;
+
             Power_Update();
 
+            //reseteando la cantidad de pases
             Continuous_Passes = 0;
 
             //annadiendo las dos q tocan por ronda
@@ -224,8 +281,8 @@ public class Scr_Game_Manager : MonoBehaviour
 
         this.Continuous_Passes++;
 
-        Change_Turn();
         Change_Round();
+        Change_Turn();
     }  
     public void Power_Update()
     {

@@ -17,6 +17,9 @@ public class Scr_Effects : MonoBehaviour
             { "Play_Card" , Play_Card },
             { "Clear" , Clear },
             { "Increase" , Increase },
+            { "Duplicate_Power" , Duplicate_Power },
+            { "Beehive" , Beehive },
+            { "Destroy_Best_Card" , Destroy_Best_Card }
         };    
     }
 
@@ -422,5 +425,158 @@ public class Scr_Effects : MonoBehaviour
 
             Main_Objects[0].GetComponent<Scr_Game_Manager>().Power_Update();
         }
+
+        else if(card.unit_type == "G")
+        {
+            if (card.player)
+                foreach (Transform obj in Main_Objects[1].transform)
+                {
+                    obj.GetComponent<Display_Card>().Card.current_power = obj.GetComponent<Display_Card>().Card.real_power - Main_Objects[1].GetComponent<Scr_DropZone>().weather_effects + Main_Objects[1].GetComponent<Scr_DropZone>().raise_effects;
+                }
+            else
+                foreach (Transform obj in Main_Objects[4].transform)
+                {
+                    obj.GetComponent<Display_Card>().Card.current_power = obj.GetComponent<Display_Card>().Card.real_power - Main_Objects[1].GetComponent<Scr_DropZone>().weather_effects + Main_Objects[1].GetComponent<Scr_DropZone>().raise_effects;
+                }
+        }
+    }
+    public void Duplicate_Power(Scr_Card card)
+    {
+        if(card.player) {
+            foreach(Transform obj in Main_Objects[1].transform)
+            {
+                obj.GetComponent<Display_Card>().Card.current_power *= 2;
+            }
+        }
+        else if(!card.player) { 
+            foreach(Transform obj in Main_Objects[4].transform)
+            {
+                obj.GetComponent<Display_Card>().Card.current_power *= 2;
+            }
+        } 
+        
+    }
+    public void Beehive(Scr_Card card)
+    {
+        int cont=1;
+        if (card.player)
+        {
+            foreach (Transform obj in Main_Objects[1].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.name == card.name)
+                    cont++;
+            }
+            foreach (Transform obj in Main_Objects[2].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.name == card.name)
+                    cont++;
+            }
+            foreach (Transform obj in Main_Objects[3].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.name == card.name)
+                    cont++;
+            }
+        }
+        else if (!card.player)
+        {
+            foreach (Transform obj in Main_Objects[4].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.name == card.name)
+                    cont++;
+            }
+            foreach (Transform obj in Main_Objects[5].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.name == card.name)
+                    cont++;
+            }
+            foreach (Transform obj in Main_Objects[6].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.name == card.name)
+                    cont++;
+            }
+        }
+        card.current_power *= cont;
+    } 
+    public void Destroy_Best_Card(Scr_Card card)
+    {
+        (int, GameObject) Best_Card = (-1, null);
+        #region//getting the best_card
+        foreach (Transform obj in Main_Objects[1].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power > Best_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type!="G")
+                Best_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+                
+        }
+        foreach (Transform obj in Main_Objects[2].transform )
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power > Best_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Best_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[3].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power > Best_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Best_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[4].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power > Best_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Best_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[5].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power > Best_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Best_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[6].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power > Best_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Best_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        #endregion
+        #region //deleting it
+        if (Best_Card.Item2.GetComponent<Display_Card>().Card.player)
+        {
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+            if (Prov_ != null)
+            {
+                Destroy(Best_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Deck1.Grave.Add(Best_Card.Item2.GetComponent<Display_Card>().Card);
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Best_Card.Item1 + card.current_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+        }
+        else if (!Best_Card.Item2.GetComponent<Display_Card>().Card.player)
+        {
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+            if (Prov_ != null)
+            {
+                Destroy(Best_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(Best_Card.Item2.GetComponent<Display_Card>().Card);
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Best_Card.Item1 + card.current_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+        }
+        #endregion
     }
 }

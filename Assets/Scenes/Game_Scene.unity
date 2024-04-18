@@ -2194,8 +2194,11 @@ MonoBehaviour:
   Continuous_Passes: 0
   Deck1: {fileID: 0}
   Deck2: {fileID: 0}
+  total_power_p1: 0
+  total_power_p2: 0
   total_power_p1_t: {fileID: 1555905598}
   total_power_p2_t: {fileID: 965077373}
+  Change_round: 0
   Drop_Zones:
   - {fileID: 2041735081}
   - {fileID: 828782372}
@@ -2559,7 +2562,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 8
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

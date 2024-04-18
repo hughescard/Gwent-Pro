@@ -17,11 +17,11 @@ public class Scr_Drag : MonoBehaviour
     public void Awake()
     {
         effects = GameObject.Find("Game_Manager").GetComponent<Scr_Effects>();
+        Current_Card = gameObject.GetComponent<Display_Card>();
     }
     public void Begin_Drag()
     {
         Scr_Game_Manager Prov_GM = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
-        Current_Card = gameObject.GetComponent<Display_Card>();
         if (Current_Card.Card.player == Prov_GM.turn && !Played)
         {
             Transform Prov_ = GameObject.Find("Zoom_Card_Zone").transform;//accede aal transform del panel del zoom_card
@@ -84,6 +84,11 @@ public class Scr_Drag : MonoBehaviour
                 GameObject Prov_Gm = GameObject.Find("Game_Manager");
 
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Continuous_Passes=0;
+
+                if (Current_Card.Card.effect == "Destroy_Best_Card")
+                    return;
+                
+
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Power_Update();
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Change_Turn();
 
@@ -149,7 +154,7 @@ public class Scr_Drag : MonoBehaviour
             }
             else if(droppable_zone.tag == "Card")
             {
-                if (Current_Card.Card.playable_zone == droppable_zone.tag && droppable_zone.GetComponent<Scr_DropZone>().board_side == Current_Card.Card.player)//verificar si el rango de la carta es parte de la zona en que esta colisionando y si no esta llena ya la zona 
+                if (Current_Card.Card.playable_zone == droppable_zone.tag && droppable_zone.GetComponent<Display_Card>().Card.player == Current_Card.Card.player)//verificar si el rango de la carta es parte de la zona en que esta colisionando y si no esta llena ya la zona 
                 {
                     return droppable_zone;
                 }
@@ -165,7 +170,7 @@ public class Scr_Drag : MonoBehaviour
     {
         if(Current_Card.Card.card_type == "D")
         {
-            if (collision.gameObject.tag == "Card")
+            if (collision.gameObject!=null && collision.gameObject.tag == "Card")
                 Colliding_Zones.Insert(0, collision.gameObject);
         }
        
