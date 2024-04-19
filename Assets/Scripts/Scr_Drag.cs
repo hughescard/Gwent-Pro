@@ -189,6 +189,18 @@ public class Scr_Drag : MonoBehaviour
         Colliding_Zones.Remove(collision.gameObject);
     }
 
+    public void Activate_Leader_Effect()
+    {
+        return;//comentar esta linea en caso de annadir nuevos efctos de lideres 
+        Scr_Game_Manager Prov_Gm = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
+        if (Current_Card.Card.player != Prov_Gm.turn || Prov_Gm.leader_effect_used) return;
+
+        effects.effects[Current_Card.Card.effect](Current_Card.Card);
+        Prov_Gm.leader_effect_used = true;
+        Prov_Gm.Continuous_Passes = 0;
+        Prov_Gm.Power_Update();
+        Prov_Gm.Change_Turn();
+    }
 
     void Update()
     {

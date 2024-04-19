@@ -59,6 +59,16 @@ public class Scr_Deck: MonoBehaviour
         
     }
 
+    public void Instantiate_Specific_Card(Scr_Card card ,Transform zone)
+    {
+                GameObject Card_Instance = Instantiate(Prefab_Card, zone);
+                Display_Card Card_Display = Card_Instance.GetComponent<Display_Card>();
+                Card_Display.Card = card;
+                Card_Display.Image = Card_Instance.transform.GetChild(0).GetComponent<Image>();
+                Card_Display.Current_Power = Card_Instance.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+       
+    }
+
     public void Deck_Order_Randomizer()
     {
         Instantiate_Leader();

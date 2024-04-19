@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEditor.Experimental.GraphView;
 
 
 /// <summary>
@@ -23,7 +24,7 @@ public class Scr_Game_Manager : MonoBehaviour
     public Scr_Player Player2;
     public bool turn;
     public List<GameObject> Principal_Objects;
-    public int round = 0;
+    public int round = 1;
     public int Continuous_Passes = 0;
     public Scr_Deck Deck1;
     public Scr_Deck Deck2;
@@ -35,11 +36,15 @@ public class Scr_Game_Manager : MonoBehaviour
     bool Change_round_2;
     private bool Winp1 = false;
     private bool Winp2 = false;
-
+    public bool leader_effect_used = true;
+    public bool leader_effect_used2 = true;
     public List<Scr_DropZone> Drop_Zones;
+    public int card_keeped_power;
 
     void Start()
     {
+        leader_effect_used = false;
+        leader_effect_used2 = false;
         turn = true;
         Player1 = new Scr_Player("Guille", "CM", true);
         Player2 = new Scr_Player("Jean", "C_and_R", false);
@@ -122,10 +127,18 @@ public class Scr_Game_Manager : MonoBehaviour
                     turn = true;
                 }
                 Change_round_2 = false;
-                total_power_p1 = 0;
-                total_power_p2 = 0;
-                total_power_p1_t.text = "0";
-                total_power_p2_t.text = "0";
+                if (Player1.faction == "C_and_R")
+                {
+                    total_power_p1 = card_keeped_power;
+                    total_power_p2 = 0;
+                }
+                else if (Player2.faction == "C_and_R")
+                {
+                    total_power_p2 = card_keeped_power;
+                    total_power_p1 = 0;
+                }
+                total_power_p1_t.text = total_power_p1.ToString();
+                total_power_p2_t.text = total_power_p2.ToString();
                 return;
             }
 
@@ -143,10 +156,18 @@ public class Scr_Game_Manager : MonoBehaviour
                     turn = false;
                 }
                 Change_round_2 = false;
-                total_power_p1 = 0;
-                total_power_p2 = 0;
-                total_power_p1_t.text = "0";
-                total_power_p2_t.text = "0";
+                if (Player1.faction == "C_and_R")
+                {
+                    total_power_p1 = card_keeped_power;
+                    total_power_p2 = 0;
+                }
+                else if (Player2.faction == "C_and_R")
+                {
+                    total_power_p2 = card_keeped_power;
+                    total_power_p1 = 0;
+                }
+                total_power_p1_t.text = total_power_p1.ToString();
+                total_power_p2_t.text = total_power_p2.ToString();
                 return;
             }
 
@@ -199,26 +220,64 @@ public class Scr_Game_Manager : MonoBehaviour
             //empate
             else
             {
-                Player1.Lives--;
-                Player2.Lives--;
-                Destroy(Principal_Objects[11].transform.GetChild(0).gameObject);
-                Destroy(Principal_Objects[10].transform.GetChild(0).gameObject);
-                if (Player1.Lives == 0 || Player2.Lives == 0)
-                {
-                    Debug.Log("se acabo el juego, quedo en empate");
-                    string sceneName = SceneManager.GetActiveScene().name;
-                    SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+                ////descomentar el codigo siguiente en caso de querer usar efecto de lider de ganar en caso de empate 
+                //if(leader_effect_used ==false)
+                //{
+                //    if (Player1.faction=="faccion del lider cuyo efecto es este")//el lider es de jugador 1
+                //    {
+                //        Player2.Lives--;
+                //        Destroy(Principal_Objects[11].transform.GetChild(0).gameObject);
+                //        leader_effect_used2 = true;
+                //        if (Player2.Lives == 0)
+                //        {
+                //            Debug.Log("se acabo el juego, gana Player1");
+                //            string sceneName = SceneManager.GetActiveScene().name;
+                //            SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+                //        }
+                //    }
+                //    else if (Player2.faction=="faccion del lider cuyo efecto es este")//el lider es del jugador 2 
+                //    {
+                //        Player1.Lives--;
+                //        Destroy(Principal_Objects[10].transform.GetChild(0).gameObject);
+                //        if (Player1.Lives == 0)
+                //        {
+                //            Debug.Log("se acabo el juego, gana Player2");
+                //            string sceneName = SceneManager.GetActiveScene().name;
+                //            SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+                //        }
+                //    }
+                //}
 
+                if(true)//cambiar if(true) por else en caso de querer usar el poder del lider cuyo efecto es ganar una ronda en empate 
+                {
+                    Player1.Lives--;
+                    Player2.Lives--;
+                    Destroy(Principal_Objects[11].transform.GetChild(0).gameObject);
+                    Destroy(Principal_Objects[10].transform.GetChild(0).gameObject);
+                    if (Player1.Lives == 0 || Player2.Lives == 0)
+                    {
+                        Debug.Log("se acabo el juego, quedo en empate");
+                        string sceneName = SceneManager.GetActiveScene().name;
+                        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+
+                    }
                 }
             }
 
             round++;
+
             foreach (GameObject obj in FindObjectsOfType<GameObject>())//destruir todas las cartas jugadas 
             {
                 if (obj.name.Contains("CardPrefab") && obj.transform.parent.gameObject != null
                     && obj.transform.parent.gameObject != GameObject.Find("Hand_Zone")
                     && obj.transform.parent.gameObject != GameObject.Find("Hand_Zone_Enemy"))
                 {
+                    if(obj.GetComponent<Display_Card>().Card.faction=="CR" && !leader_effect_used)
+                    {
+                        leader_effect_used = true;
+                        card_keeped_power = obj.GetComponent<Display_Card>().Card.real_power;
+                        continue;
+                    }
 
                     if (obj.GetComponent<Display_Card>().Card.player)
                     {
@@ -254,6 +313,10 @@ public class Scr_Game_Manager : MonoBehaviour
 
             Change_round = true;
             Change_round_2 = true;
+            leader_effect_used = false;
+
+            //descomentar el siguiente codigo para usar efecto de lider de en caso de eprder una ronda 
+
             if (total_power_p1 >= total_power_p2) Winp1 = true;
             else if(total_power_p2 > total_power_p1)Winp2 = true;
 
@@ -265,6 +328,16 @@ public class Scr_Game_Manager : MonoBehaviour
             //annadiendo las dos q tocan por ronda
             Deck1.Instantiate_Card(2);
             Deck2.Instantiate_Card(2);
+
+            //annadiendo la carta extra que da el lider de CM en la segunda ronda 
+            if (Player1.faction == "CM" && round==2)
+            {
+                Deck1.Instantiate_Card(1);
+            }
+            else if (Player2.faction == "CM" && round==2)
+            {
+                Deck2.Instantiate_Card(1);
+            }
 
         }
     }
@@ -291,8 +364,17 @@ public class Scr_Game_Manager : MonoBehaviour
         
         if(Change_round)
         {
-            total_power_p1 = 0;
-            total_power_p2 = 0;
+            if (Player1.faction == "C_and_R")
+            { 
+                total_power_p1 = card_keeped_power;
+                total_power_p2 = 0;
+            } 
+            else if (Player2.faction == "C_and_R")
+            {
+                total_power_p2 = card_keeped_power;
+                total_power_p1 = 0;
+            }
+
             Change_round = false;
             total_power_p1_t.text = total_power_p1.ToString();
             total_power_p2_t.text = total_power_p2.ToString();
@@ -346,7 +428,6 @@ public class Scr_Game_Manager : MonoBehaviour
 
 
     }
-
     public void Grave_Image_Create(GameObject obj)
     {
         if (obj.GetComponent<Display_Card>().Card.player)
@@ -368,7 +449,6 @@ public class Scr_Game_Manager : MonoBehaviour
                 Instantiate(Principal_Objects[7], Principal_Objects[5].transform);
         }
     }
-
     public void Grave_Add(GameObject obj)
     {
         if(obj.GetComponent<Display_Card>().Card.player)

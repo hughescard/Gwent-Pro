@@ -29,7 +29,7 @@ public class Scr_Effects : MonoBehaviour
             { "Get_Card" , Get_Card },
             { "Destroy_Raw" , Destroy_Raw },
             { "Weather_Invoque" , Weather_Invoque },
-            { "Average_Power" , Average_Power}
+            { "Average_Power" , Average_Power},
         };    
     }
 
@@ -1106,4 +1106,6 @@ public class Scr_Effects : MonoBehaviour
         }
 
     }
+
+   
 }

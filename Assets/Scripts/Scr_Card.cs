@@ -13,10 +13,11 @@ public class Scr_Card
     public string effect;
     public string card_type;
     public bool player;
-    public string unit_type; 
+    public string unit_type;
+    public string faction;
 
     //card constructor
-    public Scr_Card(string name, string card_type, bool player, Sprite image, int power, string playable_zone, string effect, string unit_type)
+    public Scr_Card(string name, string card_type, bool player, Sprite image, int power, string playable_zone, string effect, string unit_type, string faction)
     {
         this.name = name;
         this.image = image;
@@ -27,6 +28,7 @@ public class Scr_Card
         this.card_type = card_type;
         this.player = player;
         this.unit_type = unit_type;
+        this.faction = faction;
     }
 
 
