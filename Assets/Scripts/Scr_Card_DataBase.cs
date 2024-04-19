@@ -27,10 +27,11 @@ public class Scr_Card_DataBase : MonoBehaviour
             C_and_R_Deck.Add(new Scr_Card("Francotirador de Precisión Óptica", "U", jugador, Resources.Load<Sprite>("Spr_Francotirador_de_Precision_Optica"), 4, "D", "", "U"));
             C_and_R_Deck.Add(new Scr_Card("Tanque de Asedio Blindado", "U", jugador, Resources.Load<Sprite>("Spr_Tanque_de_Asedio_Blindado"), 5, "S", "", "U"));
             C_and_R_Deck.Add(new Scr_Card("Escuadrón de Infiltración Nanotecnológica", "U", jugador, Resources.Load<Sprite>("Spr_Escuadron_de_Infiltracion_Nanotecnologica"), 2, "M", "", "U"));
-            C_and_R_Deck.Add(new Scr_Card("Artillero de Plasma Pesado", "U", jugador, Resources.Load<Sprite>("Spr_Artillero_de_Plasma_Pesado"), 4, "D", "", "U"));
-            C_and_R_Deck.Add(new Scr_Card("Dron de Ataque Aéreo", "U", jugador, Resources.Load<Sprite>("Spr_Dron_de_Ataque_Aereo"), 3, "D", "", "U"));
-            C_and_R_Deck.Add(new Scr_Card("Unidad de Defensa Cibernética", "U", jugador, Resources.Load<Sprite>("Spr_Unidad_de_Defensa_Cibernetica"), 3, "S", "", "U"));
+            C_and_R_Deck.Add(new Scr_Card("Artillero de Plasma Pesado", "U", jugador, Resources.Load<Sprite>("Spr_Artillero_de_Plasma_Pesado"), 4, "DM", "", "U"));
+            C_and_R_Deck.Add(new Scr_Card("Dron de Ataque Aéreo", "U", jugador, Resources.Load<Sprite>("Spr_Dron_de_Ataque_Aereo"), 3, "DM", "", "U"));
+            C_and_R_Deck.Add(new Scr_Card("Unidad de Defensa Cibernética", "U", jugador, Resources.Load<Sprite>("Spr_Unidad_de_Defensa_Cibernetica"), 3, "SD", "", "U"));
             C_and_R_Deck.Add(new Scr_Card("Titán de Batalla Mejorado", "U", jugador, Resources.Load<Sprite>("Spr_Titan_de_Batalla_Mejorado"), 10, "M", "Duplicate_Power", "G"));
+            C_and_R_Deck.Add(new Scr_Card("Nexus Cerebral", "U", jugador, Resources.Load<Sprite>("Spr_Nexus_Cerebral"), 9, "MDS", "Weather_Invoque", "G"));
             C_and_R_Deck.Add(new Scr_Card("Centinela de Vanguardia", "U", jugador, Resources.Load<Sprite>("Spr_Centinela_de_Vanguardia"), 7, "S", "Get_Card", "S"));
             C_and_R_Deck.Add(new Scr_Card("Vanguardia Táctica", "U", jugador, Resources.Load<Sprite>("Spr_Vanguardia_Tactica"), 6, "D", "Destroy_Worst_Enemy_Card", "S"));
             C_and_R_Deck.Add(new Scr_Card("Vanguardia Táctica", "U", jugador, Resources.Load<Sprite>("Spr_Vanguardia_Tactica"), 6, "D", "Destroy_Worst_Enemy_Card", "S"));
@@ -62,10 +63,12 @@ public class Scr_Card_DataBase : MonoBehaviour
                 CM_Deck.Add(new Scr_Card("Arquero de Sherwood", "U", jugador, Resources.Load<Sprite>("Spr_Arquero_de_Sherwood"), 3, "D", "", "U"));
                 CM_Deck.Add(new Scr_Card("Catapulta de Asedio", "U", jugador, Resources.Load<Sprite>("Spr_Catapulta_de_Asedio"), 5, "S", "", "U"));
                 CM_Deck.Add(new Scr_Card("Sacerdote Guerrero", "U", jugador, Resources.Load<Sprite>("Spr_Sacerdote_Guerrero"), 3, "M", "", "U"));
-                CM_Deck.Add(new Scr_Card("Lancero de la Guardia Real", "U", jugador, Resources.Load<Sprite>("Spr_Lancero_de_la_Guardia_Real"), 4, "M", "", "U"));
-                CM_Deck.Add(new Scr_Card("Caballería de Choque", "U", jugador, Resources.Load<Sprite>("Spr_Caballeria_de_Choque"), 5, "M", "", "U"));
+                CM_Deck.Add(new Scr_Card("Lancero de la Guardia Real", "U", jugador, Resources.Load<Sprite>("Spr_Lancero_de_la_Guardia_Real"), 4, "MD", "", "U"));
+                CM_Deck.Add(new Scr_Card("Lancero de la Guardia Real", "U", jugador, Resources.Load<Sprite>("Spr_Lancero_de_la_Guardia_Real"), 4, "MD", "", "U"));
+                CM_Deck.Add(new Scr_Card("Caballería de Choque", "U", jugador, Resources.Load<Sprite>("Spr_Caballeria_de_Choque"), 5, "MS", "", "U"));
                 CM_Deck.Add(new Scr_Card("Ballestero Real", "U", jugador, Resources.Load<Sprite>("Spr_Ballestero_Real"), 4, "D", "", "U"));
                 CM_Deck.Add(new Scr_Card("Rey Arturo", "U", jugador, Resources.Load<Sprite>("Spr_Rey_Arturo"), 9, "M", "Duplicate_Power", "G"));
+                CM_Deck.Add(new Scr_Card("Paladín de la Luz Divina", "U", jugador, Resources.Load<Sprite>("Spr_Paladin"), 8, "MDS", "Average_Power", "G"));
                 CM_Deck.Add(new Scr_Card("Caballero de la Guardia Real", "U", jugador, Resources.Load<Sprite>("Spr_Caballero_de_la_Guardia_Real"), 5, "M", "Beehive", "S"));
                 CM_Deck.Add(new Scr_Card("Caballero de la Guardia Real", "U", jugador, Resources.Load<Sprite>("Spr_Caballero_de_la_Guardia_Real"), 5, "M", "Beehive", "S"));
                 CM_Deck.Add(new Scr_Card("Caballero de la Guardia Real", "U", jugador, Resources.Load<Sprite>("Spr_Caballero_de_la_Guardia_Real"), 5, "M", "Beehive", "S"));
@@ -73,7 +76,7 @@ public class Scr_Card_DataBase : MonoBehaviour
                 CM_Deck.Add(new Scr_Card("Cruzado Templario", "U", jugador, Resources.Load<Sprite>("Spr_Cruzado_Templario"), 7, "M", "Destroy_Raw", "S"));
 
 
-                return CM_Deck;
+            return CM_Deck;
         }
 
     }

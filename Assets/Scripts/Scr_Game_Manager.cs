@@ -347,4 +347,37 @@ public class Scr_Game_Manager : MonoBehaviour
 
     }
 
+    public void Grave_Image_Create(GameObject obj)
+    {
+        if (obj.GetComponent<Display_Card>().Card.player)
+        { 
+
+            if (Player1.faction == "CM" && Principal_Objects[4].transform.childCount == 0)
+                Instantiate(Principal_Objects[6], Principal_Objects[4].transform);
+
+            else if (Player1.faction != "CM" && Principal_Objects[4].transform.childCount == 0)
+                Instantiate(Principal_Objects[7], Principal_Objects[4].transform);
+        }
+        else
+        {
+
+            if (Player2.faction == "CM" && Principal_Objects[5].transform.childCount == 0)
+                Instantiate(Principal_Objects[6], Principal_Objects[5].transform);
+
+            else if (Player2.faction != "CM" && Principal_Objects[5].transform.childCount == 0)
+                Instantiate(Principal_Objects[7], Principal_Objects[5].transform);
+        }
+    }
+
+    public void Grave_Add(GameObject obj)
+    {
+        if(obj.GetComponent<Display_Card>().Card.player)
+        {
+            Deck1.Grave.Add(obj.GetComponent<Display_Card>().Card);
+        }
+        else
+        {
+            Deck2.Grave.Add(obj.GetComponent<Display_Card>().Card);
+        }
+    }
 }

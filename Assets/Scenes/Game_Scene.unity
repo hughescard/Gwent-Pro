@@ -301,8 +301,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Deck_Image: {fileID: 0}
   Grave_Image: {fileID: 0}
-  Deck: []
-  Grave: []
   Leader_Zone: {fileID: 1949859798}
   Hand_Zone: {fileID: 742135272}
   Prefab_Card: {fileID: 977473431661804444, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}
@@ -1078,8 +1076,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Deck_Image: {fileID: 0}
   Grave_Image: {fileID: 0}
-  Deck: []
-  Grave: []
   Leader_Zone: {fileID: 1562831840}
   Hand_Zone: {fileID: 298128369}
   Prefab_Card: {fileID: 977473431661804444, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}
@@ -1421,8 +1417,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Deck_Image: {fileID: 0}
   Grave_Image: {fileID: 0}
-  Deck: []
-  Grave: []
   Leader_Zone: {fileID: 1562831840}
   Hand_Zone: {fileID: 298128369}
   Prefab_Card: {fileID: 977473431661804444, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}
@@ -1732,8 +1726,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Deck_Image: {fileID: 0}
   Grave_Image: {fileID: 0}
-  Deck: []
-  Grave: []
   Leader_Zone: {fileID: 1562831840}
   Hand_Zone: {fileID: 298128369}
   Prefab_Card: {fileID: 977473431661804444, guid: 7e9fb836210f1784bb1f36081511f991, type: 3}

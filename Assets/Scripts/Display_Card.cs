@@ -21,6 +21,10 @@ public class Display_Card : MonoBehaviour
             {
                 Current_Power.text = Card.current_power.ToString();
             }
+            else if(Card.card_type=="D")
+            {
+                Current_Power.text = "0";
+            }
             else
             {
                 Current_Power.text = "";

@@ -17,6 +17,12 @@ public class Scr_Deck: MonoBehaviour
     public GameObject Prefab_Card;
     public GameObject Prefab_Leader;
 
+
+    private void Awake()
+    {
+        Grave = new List<Scr_Card>();   
+    }
+
     void Instantiate_Leader()//Leader Card Creation and Display 
     {
         GameObject Leader_Instance = Instantiate(Prefab_Leader, Leader_Zone);
@@ -40,8 +46,12 @@ public class Scr_Deck: MonoBehaviour
             Card_Display.Image = Card_Instance.transform.GetChild(0).GetComponent<Image>();
             Card_Display.Current_Power = Card_Instance.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
 
-            Deck.RemoveAt(Deck.Count-1);
-
+            Deck.RemoveAt(Deck.Count - 1);
+        }
+        else if(Hand_Zone.childCount>9)//enviar al cementerio 
+        {
+            Grave.Add(Deck[Deck.Count - 1]);
+            Deck.RemoveAt(Deck.Count - 1);
         }
 
         n--;

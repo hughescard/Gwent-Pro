@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.XR;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 
@@ -26,7 +27,9 @@ public class Scr_Effects : MonoBehaviour
             { "Destroy_Worst_Card" , Destroy_Worst_Card},
             { "Destroy_Worst_Enemy_Card" , Destroy_Worst_Enemy_Card},
             { "Get_Card" , Get_Card },
-            { "Destroy_Raw" , Destroy_Raw }
+            { "Destroy_Raw" , Destroy_Raw },
+            { "Weather_Invoque" , Weather_Invoque },
+            { "Average_Power" , Average_Power}
         };    
     }
 
@@ -576,6 +579,7 @@ public class Scr_Effects : MonoBehaviour
             if (Prov_ != null)
             {
                 Destroy(Best_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Grave_Image_Create(Best_Card.Item2);
                 Prov_.GetComponent<Scr_Game_Manager>().Deck1.Grave.Add(Best_Card.Item2.GetComponent<Display_Card>().Card);
                 if(card.player)//si quien activo la carta de efecto es el jugador 1 
                 {
@@ -614,6 +618,7 @@ public class Scr_Effects : MonoBehaviour
             if (Prov_ != null)
             {
                 Destroy(Best_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Grave_Image_Create(Best_Card.Item2);
                 Prov_.GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(Best_Card.Item2.GetComponent<Display_Card>().Card);
                 if(card.player)//si la activo el jugador 1 
                 {
@@ -720,6 +725,7 @@ public class Scr_Effects : MonoBehaviour
             if (Prov_ != null)
             { 
                 Destroy(Worst_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Grave_Image_Create(Worst_Card.Item2);
                 Prov_.GetComponent<Scr_Game_Manager>().Deck1.Grave.Add(Worst_Card.Item2.GetComponent<Display_Card>().Card);
                 if(card.player)//si el efecto lo activo el jugador 1
                 {  //actualizar poder jugador 1
@@ -749,8 +755,9 @@ public class Scr_Effects : MonoBehaviour
         {
             GameObject Prov_ = GameObject.Find("Game_Manager");
             if (Prov_ != null)
-            { 
+            {
                 Destroy(Worst_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Grave_Image_Create(Worst_Card.Item2);
                 Prov_.GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(Worst_Card.Item2.GetComponent<Display_Card>().Card);
                 if(card.player)//si activo el efecto el jugador 1
                 {
@@ -829,9 +836,10 @@ public class Scr_Effects : MonoBehaviour
             else if (Prov_ != null)//hay peor carta en el campo rival 
             {
                 Destroy(Worst_Enemy_Card.Item2);
-                //actualizar poder jugador 2 y 1 
+                Prov_.GetComponent<Scr_Game_Manager>().Grave_Image_Create(Worst_Enemy_Card.Item2);
                 Prov_.GetComponent<Scr_Game_Manager>().Deck1.Grave.Add(Worst_Enemy_Card.Item2.GetComponent<Display_Card>().Card);
 
+                //actualizar poder jugador 2 y 1 
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Worst_Enemy_Card.Item1;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
 
@@ -890,6 +898,7 @@ public class Scr_Effects : MonoBehaviour
             else if (Prov_ != null)//si hay peor carta en el campo enemigo
             {
                 Destroy(Worst_Enemy_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Grave_Image_Create(Worst_Enemy_Card.Item2);
                 Prov_.GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(Worst_Enemy_Card.Item2.GetComponent<Display_Card>().Card);
                 //actualizar el poder del jugador 1 y 2
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Worst_Enemy_Card.Item1;
@@ -921,18 +930,14 @@ public class Scr_Effects : MonoBehaviour
         {
             hand = GameObject.Find("Hand_Zone_Enemy");
         }
-
-        if (hand.transform.childCount < 10)
+        Scr_Game_Manager Prov_ = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
+        if(card.player)
         {
-            Scr_Game_Manager Prov_ = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
-            if(card.player)
-            {
-                Prov_.Deck1.Instantiate_Card(1);
-            }
-            else
-            {
-                Prov_.Deck2.Instantiate_Card(1);
-            }
+            Prov_.Deck1.Instantiate_Card(1);
+        }
+        else
+        {
+            Prov_.Deck2.Instantiate_Card(1);
         }
     }    
     public void Destroy_Raw(Scr_Card card)
@@ -991,6 +996,8 @@ public class Scr_Effects : MonoBehaviour
             for (int i = 0; i < Smallest_Raw.Item1; i++)
             {
                 power_to_dif += Smallest_Raw.Item2.transform.GetChild(i).GetComponent<Display_Card>().Card.current_power;
+                GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>().Grave_Image_Create(Smallest_Raw.Item2.transform.GetChild(i).gameObject);
+                GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>().Grave_Add(Smallest_Raw.Item2.transform.GetChild(i).gameObject);
                 Destroy(Smallest_Raw.Item2.transform.GetChild(i).gameObject);
             }
 
@@ -1038,5 +1045,65 @@ public class Scr_Effects : MonoBehaviour
             }
 
         }
+    }
+    
+    public void Weather_Invoque(Scr_Card card)
+    {
+        if(card.player)//activo el efecto el jugador 1
+        {
+            GameObject hand = GameObject.Find("Hand_Zone");
+            foreach(Transform obj in hand.transform)
+            {
+                if(obj.GetComponent<Display_Card>().Card.effect == "Weather")
+                {
+                    obj.SetParent(GameObject.Find("Weather_Zone").transform);
+                    Weather(obj.GetComponent<Display_Card>().Card);
+                    break;
+                }
+            }
+        }
+
+        if (!card.player)//activo el efecto el jugador 2
+        {
+            GameObject hand = GameObject.Find("Hand_Zone_Enemy");
+            foreach (Transform obj in hand.transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.effect == "Weather")
+                {
+                    obj.GetComponent<Scr_Drag>().Played = true;
+                    obj.SetParent(GameObject.Find("Weather_Zone").transform);
+                    Weather(obj.GetComponent<Display_Card>().Card);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void Average_Power(Scr_Card card)
+    {
+        int total_power=0;
+        int total_cards=0;
+
+        for(int i=1;i<=6;i++)
+        {
+            foreach(Transform obj in Main_Objects[i].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.unit_type == "G") continue;
+                total_cards++;
+                total_power += int.Parse(obj.GetComponent<Display_Card>().Current_Power.text);
+            }
+        }
+
+        int average = total_power /= total_cards;
+
+        for (int i = 1; i <= 6; i++)
+        {
+            foreach (Transform obj in Main_Objects[i].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.unit_type == "G") continue;
+                obj.GetComponent<Display_Card>().Card.current_power = average;
+            }
+        }
+
     }
 }

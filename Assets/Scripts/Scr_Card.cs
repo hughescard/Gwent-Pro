@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Scr_Card : ScriptableObject
+public class Scr_Card
 {
     //card properties
     public Sprite image;
