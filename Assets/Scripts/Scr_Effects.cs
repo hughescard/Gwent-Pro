@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
+
+//revisar poderes de eliminacionde cartas;
 public class Scr_Effects : MonoBehaviour
 {
     public Dictionary<string,Action<Scr_Card>> effects;
@@ -19,7 +22,11 @@ public class Scr_Effects : MonoBehaviour
             { "Increase" , Increase },
             { "Duplicate_Power" , Duplicate_Power },
             { "Beehive" , Beehive },
-            { "Destroy_Best_Card" , Destroy_Best_Card }
+            { "Destroy_Best_Card" , Destroy_Best_Card },
+            { "Destroy_Worst_Card" , Destroy_Worst_Card},
+            { "Destroy_Worst_Enemy_Card" , Destroy_Worst_Enemy_Card},
+            { "Get_Card" , Get_Card },
+            { "Destroy_Raw" , Destroy_Raw }
         };    
     }
 
@@ -185,7 +192,7 @@ public class Scr_Effects : MonoBehaviour
                 Main_Objects[0].GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(card);
 
             }
-
+            if(obj.gameObject!=null)
             Destroy(obj.gameObject);
 
             for(int i=1;i<=6;i++)
@@ -539,15 +546,57 @@ public class Scr_Effects : MonoBehaviour
         }
         #endregion
         #region //deleting it
-        if (Best_Card.Item2.GetComponent<Display_Card>().Card.player)
+        
+        if (Best_Card.Item2 == null) //no hay mejor carta
+        {
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+            if (card.player)
+            {
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+            }
+            else
+            {
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+            }
+
+            Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+            foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+            {
+                if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+            }
+        }//no hay mejor carta
+
+        else if (Best_Card.Item2.GetComponent<Display_Card>().Card.player)//si la mejor carta es del jugador 1
         {
             GameObject Prov_ = GameObject.Find("Game_Manager");
             if (Prov_ != null)
             {
                 Destroy(Best_Card.Item2);
                 Prov_.GetComponent<Scr_Game_Manager>().Deck1.Grave.Add(Best_Card.Item2.GetComponent<Display_Card>().Card);
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Best_Card.Item1 + card.current_power;
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+                if(card.player)//si quien activo la carta de efecto es el jugador 1 
+                {
+                    //actualizar poder jugador 1
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Best_Card.Item1 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+                    //actualizar poder jugador 2
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+                }
+
+                else//si quien activo la carta de efecto es el jugador 2 
+                {
+                    //actualizar poder jugador 1
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Best_Card.Item1;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+                    //actualizar poder jugador 2 
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+                }
+
 
                 Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
                 foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
@@ -558,15 +607,168 @@ public class Scr_Effects : MonoBehaviour
                 }
             }
         }
-        else if (!Best_Card.Item2.GetComponent<Display_Card>().Card.player)
+        
+        else if (!Best_Card.Item2.GetComponent<Display_Card>().Card.player)//si la mejor carta es del jugador 2 
         {
             GameObject Prov_ = GameObject.Find("Game_Manager");
             if (Prov_ != null)
             {
                 Destroy(Best_Card.Item2);
                 Prov_.GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(Best_Card.Item2.GetComponent<Display_Card>().Card);
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Best_Card.Item1 + card.current_power;
+                if(card.player)//si la activo el jugador 1 
+                {
+                    //actualizar poder jugador 1
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+                    //actualizar poder jugador 2
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Best_Card.Item1;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+                }
+
+                else//si la activo el jugador 2
+                {
+                    //actualizar poder jugador 1
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+                    //actualizar poder jugador 2
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Best_Card.Item1 +card.current_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+                }
+
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+        }
+
+        
+        #endregion
+    }
+
+    public void Destroy_Worst_Card(Scr_Card card)
+    {
+        (int, GameObject) Worst_Card = (100, null);
+        #region//getting the worst_card
+        foreach (Transform obj in Main_Objects[1].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Worst_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[2].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Worst_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[3].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Worst_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[4].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Worst_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[5].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Worst_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        foreach (Transform obj in Main_Objects[6].transform)
+        {
+            if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                Worst_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+        }
+        #endregion
+
+        #region //deleting it
+        if (Worst_Card.Item2 == null) //no hay mejor carta
+        {
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+            if (card.player)
+            {
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+            }
+            else
+            {
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+            }
+
+            Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+            foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+            {
+                if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+            }
+        }//no hay mejor carta
+        else if (Worst_Card.Item2!=null && Worst_Card.Item2.GetComponent<Display_Card>().Card.player)//si la peor carta es del jugador 1
+        {
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+            if (Prov_ != null)
+            { 
+                Destroy(Worst_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Deck1.Grave.Add(Worst_Card.Item2.GetComponent<Display_Card>().Card);
+                if(card.player)//si el efecto lo activo el jugador 1
+                {  //actualizar poder jugador 1
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Worst_Card.Item1 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+                    //el poder del jugador 2 no se actualiza porque se queda igual
+                }
+                else//si el efecto lo activo el jugador 2
+                {
+                    //actualizar poder jugador 1 
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Worst_Card.Item1;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+                    //actualizar poder jugador 2
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+                }
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+        }
+        else if (Worst_Card.Item2!=null && !Worst_Card.Item2.GetComponent<Display_Card>().Card.player)//si la peor carta es del jugador 2
+        {
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+            if (Prov_ != null)
+            { 
+                Destroy(Worst_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(Worst_Card.Item2.GetComponent<Display_Card>().Card);
+                if(card.player)//si activo el efecto el jugador 1
+                {
+                    //actualizar poder jugador 1 
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+                    //actualizar poder jugador 2 
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Worst_Card.Item1;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+                }
+                else//si activo el efecto el jugador 2 
+                {
+                    //no hay q actuaalizar el poder del 1 porque no se afecto
+
+                    //actualizar poder jugador 2 
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Worst_Card.Item1 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+                }
 
                 Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
                 foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
@@ -578,5 +780,263 @@ public class Scr_Effects : MonoBehaviour
             }
         }
         #endregion
+    }
+    public void Destroy_Worst_Enemy_Card(Scr_Card card)
+    {
+        (int, GameObject) Worst_Enemy_Card = (100, null);
+        
+        if(!card.player)//activo el efecto el jugador 2 
+        {
+            #region getting worst enemy card
+            foreach (Transform obj in Main_Objects[1].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Enemy_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                    Worst_Enemy_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+            }
+            foreach (Transform obj in Main_Objects[2].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Enemy_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                    Worst_Enemy_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+            }
+            foreach (Transform obj in Main_Objects[3].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Enemy_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                    Worst_Enemy_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+            }
+            #endregion
+
+            //eliminando la peor carta del rival 
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+
+            if (Worst_Enemy_Card.Item2 == null) //no hay peor carta en el rival
+            {    
+                ///se actualiza el poder del jugador 2 solamente 
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+               
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+            
+            else if (Prov_ != null)//hay peor carta en el campo rival 
+            {
+                Destroy(Worst_Enemy_Card.Item2);
+                //actualizar poder jugador 2 y 1 
+                Prov_.GetComponent<Scr_Game_Manager>().Deck1.Grave.Add(Worst_Enemy_Card.Item2.GetComponent<Display_Card>().Card);
+
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Worst_Enemy_Card.Item1;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+        }
+        
+        else if(card.player)//activo el efecto el jugador 1
+        {
+            #region getting worst_enemy_card
+            foreach (Transform obj in Main_Objects[4].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Enemy_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                    Worst_Enemy_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+            }
+            foreach (Transform obj in Main_Objects[5].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Enemy_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                    Worst_Enemy_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+            }
+            foreach (Transform obj in Main_Objects[6].transform)
+            {
+                if (obj.GetComponent<Display_Card>().Card.current_power < Worst_Enemy_Card.Item1 && obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                    Worst_Enemy_Card = (obj.GetComponent<Display_Card>().Card.current_power, obj.gameObject);
+
+            }
+            #endregion
+
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+            if (Worst_Enemy_Card.Item2 == null) //no hay peor carta en el rival
+            {
+                ///se actualiza el poder del jugador 1 solamente 
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+
+            else if (Prov_ != null)//si hay peor carta en el campo enemigo
+            {
+                Destroy(Worst_Enemy_Card.Item2);
+                Prov_.GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(Worst_Enemy_Card.Item2.GetComponent<Display_Card>().Card);
+                //actualizar el poder del jugador 1 y 2
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Worst_Enemy_Card.Item1;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+        }
+        
+    }
+
+    public void Get_Card(Scr_Card card)
+    {
+        GameObject hand;
+        if (card.player)
+        {
+            hand = GameObject.Find("Hand_Zone");
+        }
+        else
+        {
+            hand = GameObject.Find("Hand_Zone_Enemy");
+        }
+
+        if (hand.transform.childCount < 10)
+        {
+            Scr_Game_Manager Prov_ = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
+            if(card.player)
+            {
+                Prov_.Deck1.Instantiate_Card(1);
+            }
+            else
+            {
+                Prov_.Deck2.Instantiate_Card(1);
+            }
+        }
+    }    
+    public void Destroy_Raw(Scr_Card card)
+    {
+        (int,GameObject) Smallest_Raw = (10,null);
+        for(int i = 1 ; i<=6 ; i++)
+        {
+            if(Smallest_Raw.Item1 > Main_Objects[i].transform.childCount)
+            {
+                if (Main_Objects[i].transform.childCount == 0) continue;
+                Smallest_Raw.Item1 = Math.Min(Smallest_Raw.Item1, Main_Objects[i].transform.childCount);
+                Smallest_Raw.Item2 = Main_Objects[i];
+            }
+            
+        }
+
+        if(Smallest_Raw.Item2 == null)//no hay cartas jugadas en ninguna fila
+        {
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+
+            if(card.player)//el eefcto fue activado por el jugador 1 
+            {
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+            else //el efecto lo activo el jugador 2
+            {
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+                foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+                {
+                    if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                    Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+                }
+            }
+                
+            return;
+        }
+
+        else //se encontro la fila con menos cartas 
+        {
+            int power_to_dif = 0;
+            bool player_affected = Smallest_Raw.Item2.transform.GetChild(0).GetComponent<Display_Card>().Card.player;
+
+            for (int i = 0; i < Smallest_Raw.Item1; i++)
+            {
+                power_to_dif += Smallest_Raw.Item2.transform.GetChild(i).GetComponent<Display_Card>().Card.current_power;
+                Destroy(Smallest_Raw.Item2.transform.GetChild(i).gameObject);
+            }
+
+            GameObject Prov_ = GameObject.Find("Game_Manager");
+            
+            if(player_affected && card.player)//el efecto fue activado por el jugador 1 y afecto al jugador 1
+            {
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power - power_to_dif;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+            }
+
+            else if (!player_affected && !card.player)// efecto lo activo el jugador 2 y afecto al juagador 2
+            {
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power - power_to_dif;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+            }
+
+            else if(!player_affected && card.player)//el efecto lo activo el jugador 1 y afecto al jugador 2
+            {
+                //actualizar el poder de ambos jugadores
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power ;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - power_to_dif;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+            }
+
+            else if (player_affected && !card.player)//el efecto lo activo el jugador 2 y afecto al jugador 1
+            {
+                //actualizar el poder de ambos jugadores
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
+
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - power_to_dif;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
+            }
+
+
+            Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
+            foreach (GameObject obj in Prov_.GetComponent<Scr_Game_Manager>().Principal_Objects)
+            {
+                if (obj.name == "Grave_Image_CM" || obj.name == "Grave_Image_CR" || obj.name == "Grave_Zone" || obj.name == "Grave_Zone_Enemy" || obj.name == "Lives" || obj.name == "Lives_Zone" || obj.name == "Lives_Zone_Enemy") continue;
+
+                Prov_.GetComponent<Scr_Game_Manager>().Rotate_Object(obj);
+            }
+
+        }
     }
 }

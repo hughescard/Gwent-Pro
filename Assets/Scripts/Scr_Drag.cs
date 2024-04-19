@@ -87,7 +87,13 @@ public class Scr_Drag : MonoBehaviour
 
                 if (Current_Card.Card.effect == "Destroy_Best_Card")
                     return;
-                
+                else if (Current_Card.Card.effect == "Destroy_Worst_Card")
+                    return;
+                else if (Current_Card.Card.effect == "Destroy_Worst_Enemy_Card")
+                    return;
+                else if (Current_Card.Card.effect == "Destroy_Raw")
+                    return;
+
 
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Power_Update();
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Change_Turn();
