@@ -1,0 +1,12 @@
+Antes de comenzar a jugar se aconseja hacer uso de la guia de cartas para obtener informacion de 
+cada una de las cartas de cada deck
+
+Importante recalcar que este proyecto es como lo dice su nombre un proyecto en el cual se tenia como 
+objetivo cumplir con todos los requisitos del Pdf de orientacion del trabajo y objetivo que se cumplio
+se dasarrollaron todos los efectos de cartas orientados y acataron las reglas del juego
+
+Es probable que durante la ejecucion del juego el texto de las cartas pueda llegar a ser dificil de ver
+por lo que se aconseja usar la guia de cartas para obtener la informacion de cada carta 
+
+
+
