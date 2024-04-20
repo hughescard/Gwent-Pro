@@ -85,6 +85,9 @@ public class Scr_Drag : MonoBehaviour
 
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Continuous_Passes=0;
 
+                if (Current_Card.Card.unit_type != "G")//actualizar el poder de la carta del real al afectado por climas y aumentos  
+                    Current_Card.Card.current_power = Current_Card.Card.current_power + Colliding_Zone.GetComponent<Scr_DropZone>().raise_effects - Colliding_Zone.GetComponent<Scr_DropZone>().weather_effects;
+                
                 if (Current_Card.Card.effect == "Destroy_Best_Card")
                     return;
                 else if (Current_Card.Card.effect == "Destroy_Worst_Card")
@@ -93,7 +96,6 @@ public class Scr_Drag : MonoBehaviour
                     return;
                 else if (Current_Card.Card.effect == "Destroy_Raw")
                     return;
-
 
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Power_Update();
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Change_Turn();
@@ -114,6 +116,7 @@ public class Scr_Drag : MonoBehaviour
 
     private GameObject Is_Correct_Zone(Display_Card Current_Card) 
     {
+        GameObject maybe = null;
         foreach( GameObject droppable_zone in Colliding_Zones ) 
         {
             if(droppable_zone.tag == "W" )//si es una dropzone de clima
@@ -166,9 +169,35 @@ public class Scr_Drag : MonoBehaviour
                 }
             }
 
+            else if (droppable_zone.tag == "Deck")
+            {
+                Scr_Game_Manager Prov_ = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
+                if((Prov_.player1_ft || Prov_.player2_ft) && Prov_.times_used < 2)
+                {
+                    if(Prov_.turn)
+                    {
+                        System.Random rand = new System.Random();
+                        int k = rand.Next(Prov_.Deck1.Deck.Count - 1);
+                        Prov_.Deck1.Instantiate_Specific_Card(Prov_.Deck1.Deck[Prov_.Deck1.Deck.Count-1], Prov_.Deck1.Hand_Zone);
+                        Prov_.Deck1.Deck.Insert(k, Current_Card.Card);
+                        Prov_.times_used ++;
+                        maybe = gameObject;
+                    }
+                    else
+                    {
+                        System.Random rand = new System.Random();
+                        int k = rand.Next(Prov_.Deck2.Deck.Count - 1);
+                        Prov_.Deck2.Instantiate_Specific_Card(Prov_.Deck2.Deck[Prov_.Deck2.Deck.Count - 1], Prov_.Deck2.Hand_Zone);
+                        Prov_.Deck2.Deck.Insert(k , Current_Card.Card);
+                        Prov_.times_used++;
+                        maybe = gameObject;
+                    }
+                }
+            }
 
         }
 
+        if (maybe != null) Destroy(maybe);
         return null;//las zonas con las q estaba colisionando no son validas
     }
 
@@ -191,15 +220,15 @@ public class Scr_Drag : MonoBehaviour
 
     public void Activate_Leader_Effect()
     {
-        return;//comentar esta linea en caso de annadir nuevos efctos de lideres 
-        Scr_Game_Manager Prov_Gm = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
-        if (Current_Card.Card.player != Prov_Gm.turn || Prov_Gm.leader_effect_used) return;
+        return;//comentar esta linea en caso de annadir nuevos efctos de lideres y descomentar las de abajo 
+        //Scr_Game_Manager Prov_Gm = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
+        //if (Current_Card.Card.player != Prov_Gm.turn || Prov_Gm.leader_effect_used) return;
 
-        effects.effects[Current_Card.Card.effect](Current_Card.Card);
-        Prov_Gm.leader_effect_used = true;
-        Prov_Gm.Continuous_Passes = 0;
-        Prov_Gm.Power_Update();
-        Prov_Gm.Change_Turn();
+        //effects.effects[Current_Card.Card.effect](Current_Card.Card);
+        //Prov_Gm.leader_effect_used = true;
+        //Prov_Gm.Continuous_Passes = 0;
+        //Prov_Gm.Power_Update();
+        //Prov_Gm.Change_Turn();
     }
 
     void Update()

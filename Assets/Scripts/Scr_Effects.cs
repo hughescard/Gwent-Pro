@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR;
-using static UnityEditor.Experimental.GraphView.GraphView;
+//using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 //revisar poderes de eliminacionde cartas;

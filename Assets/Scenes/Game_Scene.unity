@@ -261,9 +261,10 @@ GameObject:
   - component: {fileID: 144669550}
   - component: {fileID: 144669549}
   - component: {fileID: 144669548}
+  - component: {fileID: 144669551}
   m_Layer: 5
   m_Name: Deck_Zone
-  m_TagString: Untagged
+  m_TagString: Deck
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -343,6 +344,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 144669546}
   m_CullTransparentMesh: 1
+--- !u!61 &144669551
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 144669546}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -2.8251343, y: -1.7474442}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 70.68616, y: 73.54866}
+  m_EdgeRadius: 0
 --- !u!1 &148737445
 GameObject:
   m_ObjectHideFlags: 0
@@ -1377,9 +1423,10 @@ GameObject:
   - component: {fileID: 470690805}
   - component: {fileID: 470690804}
   - component: {fileID: 470690803}
+  - component: {fileID: 470690806}
   m_Layer: 5
   m_Name: Deck_Zone_Enemy
-  m_TagString: Untagged
+  m_TagString: Deck
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1459,6 +1506,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 470690801}
   m_CullTransparentMesh: 1
+--- !u!61 &470690806
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 470690801}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 1.1751709, y: 0.39045715}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 69.161865, y: 68.41492}
+  m_EdgeRadius: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1822,6 +1914,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 470690802}
+  - {fileID: 144669547}
   - {fileID: 358575919}
   - {fileID: 1377363465}
   - {fileID: 1106074750}
@@ -1841,8 +1935,6 @@ RectTransform:
   - {fileID: 1802092434}
   - {fileID: 742135272}
   - {fileID: 298128369}
-  - {fileID: 144669547}
-  - {fileID: 470690802}
   - {fileID: 571965912}
   - {fileID: 267590842}
   - {fileID: 1564084941}
@@ -2191,6 +2283,8 @@ MonoBehaviour:
   total_power_p1_t: {fileID: 1555905598}
   total_power_p2_t: {fileID: 965077373}
   Change_round: 0
+  leader_effect_used: 0
+  leader_effect_used2: 1
   Drop_Zones:
   - {fileID: 2041735081}
   - {fileID: 828782372}
@@ -2198,6 +2292,11 @@ MonoBehaviour:
   - {fileID: 1199047093}
   - {fileID: 1925454794}
   - {fileID: 2115749653}
+  card_keeped_power: 0
+  player1_ft: 1
+  player2_ft: 1
+  times_used: 0
+  turn_number: 1
 --- !u!4 &759727369
 Transform:
   m_ObjectHideFlags: 0

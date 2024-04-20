@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEditor.Experimental.GraphView;
+//using UnityEditor.Experimental.GraphView;
 
 
 /// <summary>
@@ -40,7 +40,10 @@ public class Scr_Game_Manager : MonoBehaviour
     public bool leader_effect_used2 = true;
     public List<Scr_DropZone> Drop_Zones;
     public int card_keeped_power;
-
+    public bool player1_ft = true;
+    public bool player2_ft = true;
+    public int times_used = 0;
+    public int turn_number = 1;
     void Start()
     {
         leader_effect_used = false;
@@ -111,6 +114,13 @@ public class Scr_Game_Manager : MonoBehaviour
     }
     public void Change_Turn()
     {
+        if(turn_number==1)
+        player1_ft = false;
+        if(turn_number==2)
+        player2_ft = false;
+        
+        times_used = 0;
+        turn_number++;
         if(Change_round_2)
         {
             if (Winp1)

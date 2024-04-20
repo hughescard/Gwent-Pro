@@ -15,6 +15,7 @@ TagManager:
   - Rd
   - Rs
   - LeaderCard
+  - Deck
   layers:
   - Default
   - TransparentFX
