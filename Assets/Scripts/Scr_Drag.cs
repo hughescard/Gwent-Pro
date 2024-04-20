@@ -73,7 +73,7 @@ public class Scr_Drag : MonoBehaviour
                 if(Current_Card.Card.effect != "")
                     effects.effects[Current_Card.Card.effect](Current_Card.Card);
 
-                else if(Current_Card.Card.card_type == "U")
+                if(Current_Card.Card.card_type == "U")
                     effects.effects["Play_Card"](Current_Card.Card);
 
                 Dragged = false;
@@ -85,8 +85,8 @@ public class Scr_Drag : MonoBehaviour
 
                 Prov_Gm.GetComponent<Scr_Game_Manager>().Continuous_Passes=0;
 
-                if (Current_Card.Card.unit_type != "G")//actualizar el poder de la carta del real al afectado por climas y aumentos  
-                    Current_Card.Card.current_power = Current_Card.Card.current_power + Colliding_Zone.GetComponent<Scr_DropZone>().raise_effects - Colliding_Zone.GetComponent<Scr_DropZone>().weather_effects;
+               /* if (Current_Card.Card.unit_type != "G" && Current_Card.Card.card_type != "U")//actualizar el poder de la carta del real al afectado por climas y aumentos  
+                    Current_Card.Card.current_power = Current_Card.Card.current_power + Colliding_Zone.GetComponent<Scr_DropZone>().raise_effects - Colliding_Zone.GetComponent<Scr_DropZone>().weather_effects;*/
                 
                 if (Current_Card.Card.effect == "Destroy_Best_Card")
                     return;

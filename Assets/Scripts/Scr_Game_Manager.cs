@@ -284,9 +284,22 @@ public class Scr_Game_Manager : MonoBehaviour
                 {
                     if(obj.GetComponent<Display_Card>().Card.faction=="CR" && !leader_effect_used)
                     {
-                        leader_effect_used = true;
-                        card_keeped_power = obj.GetComponent<Display_Card>().Card.real_power;
-                        continue;
+                        bool Unit_Card = false;
+                        foreach (Scr_DropZone dropzpne in Drop_Zones)
+                        {
+                            if(obj.transform.parent == dropzpne.transform)
+                            { 
+                                Unit_Card = true;
+                                break;
+                            }
+                        }
+                        if(Unit_Card)
+                        {
+                            leader_effect_used = true;
+                            card_keeped_power = obj.GetComponent<Display_Card>().Card.real_power;
+                            continue;
+                        }
+                        
                     }
 
                     if (obj.GetComponent<Display_Card>().Card.player)
@@ -323,9 +336,7 @@ public class Scr_Game_Manager : MonoBehaviour
 
             Change_round = true;
             Change_round_2 = true;
-            leader_effect_used = false;
-
-            //descomentar el siguiente codigo para usar efecto de lider de en caso de eprder una ronda 
+            leader_effect_used = false; 
 
             if (total_power_p1 >= total_power_p2) Winp1 = true;
             else if(total_power_p2 > total_power_p1)Winp2 = true;
