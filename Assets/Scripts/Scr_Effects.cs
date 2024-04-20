@@ -455,13 +455,15 @@ public class Scr_Effects : MonoBehaviour
         if(card.player) {
             foreach(Transform obj in Main_Objects[1].transform)
             {
+                if(obj.GetComponent<Display_Card>().Card.unit_type!="G")
                 obj.GetComponent<Display_Card>().Card.current_power *= 2;
             }
         }
         else if(!card.player) { 
             foreach(Transform obj in Main_Objects[4].transform)
             {
-                obj.GetComponent<Display_Card>().Card.current_power *= 2;
+                if (obj.GetComponent<Display_Card>().Card.unit_type != "G")
+                    obj.GetComponent<Display_Card>().Card.current_power *= 2;
             }
         } 
         
