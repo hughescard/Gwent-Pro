@@ -13,25 +13,26 @@ public class Display_Card : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(gameObject.transform.parent == GameObject.Find("Melee_Zone") ||
+        /*if(gameObject.transform.parent == GameObject.Find("Melee_Zone") ||
             gameObject.transform.parent == GameObject.Find("Distance_Zone") ||
             gameObject.transform.parent == GameObject.Find("Siege_Zone") ||
             gameObject.transform.parent == GameObject.Find("Melee_Zone_Enemy") ||
             gameObject.transform.parent == GameObject.Find("Distance_Zone_Enemy") ||
             gameObject.transform.parent == GameObject.Find("Siege_Zone_Enemy"))
-        gameObject.transform.parent.GetComponent<Scr_DropZone>().Power_Modifier();
+        gameObject.transform.parent.GetComponent<Scr_DropZone>().Power_Modifier();*/
 
         if (Card != null)
         {
             Image.sprite = Card.image;
-            if (Card.current_power > 0)
-            {
-                Current_Power.text = Card.current_power.ToString();
-            }
-            else if(Card.card_type=="D")
+            if (Card.card_type == "D")
             {
                 Current_Power.text = "0";
             }
+            else if (Card.current_power > 0)
+            {
+                Current_Power.text = Card.current_power.ToString();
+            }
+            
             else
             {
                 Current_Power.text = "";

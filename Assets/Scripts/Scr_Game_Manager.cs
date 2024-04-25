@@ -297,6 +297,7 @@ public class Scr_Game_Manager : MonoBehaviour
                         {
                             leader_effect_used = true;
                             card_keeped_power = obj.GetComponent<Display_Card>().Card.real_power;
+                            obj.GetComponent<Display_Card>().Card.current_power = (obj.GetComponent<Display_Card>().Card.real_power);
                             continue;
                         }
                         

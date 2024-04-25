@@ -10,12 +10,12 @@ using UnityEngine.XR;
 //revisar poderes de eliminacionde cartas;
 public class Scr_Effects : MonoBehaviour
 {
-    public Dictionary<string,Action<Scr_Card>> effects;
+    public Dictionary<string,Action<Scr_Card,GameObject>> effects;
     public List<GameObject> Main_Objects;
     private void Start()
     {
         //aqui se annaden los metodos de los efectos al diccionario
-        effects = new Dictionary<string, Action<Scr_Card>>()
+        effects = new Dictionary<string, Action<Scr_Card , GameObject>>()
         {
             { "Weather" , Weather },
             { "Play_Card" , Play_Card },
@@ -34,40 +34,89 @@ public class Scr_Effects : MonoBehaviour
     }
 
 
-    public void Play_Card(Scr_Card card)
+    public void Play_Card(Scr_Card card , GameObject Current_Zone)
     {
         //verificar si es de oro ya que estas no se afectan por los climas ni por los aumentos
         if (card.unit_type == "G") return;
 
-        //aqui se resta al poder de la carta los efectos de los climas activos que afectan su zona para el jugador 1
-        if(card.playable_zone.IndexOf("D") !=-1 && card.player)
+        //aqui se resta y se suma al poder de la carta los efectos de los climas y los aumentos activos que afectan su zona para el jugador 1
+        //si la carta se puede jugar en dos rangos y es del jugador 1 
+        if (card.playable_zone.IndexOf("D") != -1 && card.playable_zone.IndexOf("M") != -1 && card.player)//si laa carta se puede jugar en dos rangoos (DM)
         {
-            card.current_power = card.real_power - GameObject.Find("Distance_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Distance_Zone").GetComponent<Scr_DropZone>().raise_effects;
+            if (Current_Zone == GameObject.Find("Distance_Zone"))
+                card.current_power = card.current_power - GameObject.Find("Distance_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Distance_Zone").GetComponent<Scr_DropZone>().raise_effects;
+            else
+                card.current_power = card.current_power - GameObject.Find("Melee_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Melee_Zone").GetComponent<Scr_DropZone>().raise_effects;
+        }
+        else if (card.playable_zone.IndexOf("D") != -1 && card.playable_zone.IndexOf("S") != -1 && card.player)//si la carta se puede jugar en dos rangos (DS) 
+        {
+            if (Current_Zone == GameObject.Find("Distance_Zone"))
+                card.current_power = card.current_power - GameObject.Find("Distance_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Distance_Zone").GetComponent<Scr_DropZone>().raise_effects;
+            else
+                card.current_power = card.current_power - GameObject.Find("Siege_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Siege_Zone").GetComponent<Scr_DropZone>().raise_effects;
+        }
+        else if (card.playable_zone.IndexOf("S") != -1 && card.playable_zone.IndexOf("M") != -1 && card.player)//si la carta se puede jugar en dos rangos (MS)
+        {
+            if (Current_Zone == GameObject.Find("Siege_Zone"))
+                card.current_power = card.current_power - GameObject.Find("Siege_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Siege_Zone").GetComponent<Scr_DropZone>().raise_effects;
+            else
+                card.current_power = card.current_power - GameObject.Find("Melee_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Melee_Zone").GetComponent<Scr_DropZone>().raise_effects;
+        }
+
+        //si la carta se puede jugar en un solo rango y es del jugador 1 
+        else if (card.playable_zone.IndexOf("D") !=-1 && card.player)
+        {
+            card.current_power = card.current_power - GameObject.Find("Distance_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Distance_Zone").GetComponent<Scr_DropZone>().raise_effects;
         }
         else if (card.playable_zone.IndexOf("M") != -1 && card.player)
         {
-            card.current_power = card.real_power - GameObject.Find("Melee_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Melee_Zone").GetComponent<Scr_DropZone>().raise_effects;
+            card.current_power = card.current_power - GameObject.Find("Melee_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Melee_Zone").GetComponent<Scr_DropZone>().raise_effects;
         }
         else if (card.playable_zone.IndexOf("S") != -1 && card.player)
         {
-            card.current_power = card.real_power - GameObject.Find("Siege_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Siege_Zone").GetComponent<Scr_DropZone>().raise_effects;
+            card.current_power = card.current_power - GameObject.Find("Siege_Zone").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Siege_Zone").GetComponent<Scr_DropZone>().raise_effects;
         }
 
-        //aqui se resta al poder de la carta los efectos de los climas activos que afectan su zona para el jugador 2
+
+        //aqui se resta y se suma al poder de la carta los efectos de los climas y los aumentos activos que afectan su zona para el jugador 2
+        //si la carta se puede jugar en dos rangos y es del jugador 2
+        else if (card.playable_zone.IndexOf("D") != -1 && card.playable_zone.IndexOf("M") != -1 && !card.player)//si laa carta se puede jugar en dos rangoos (DM)
+        {
+            if (Current_Zone == GameObject.Find("Distance_Zone_Enemy"))
+                card.current_power = card.current_power - GameObject.Find("Distance_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Distance_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+            else
+                card.current_power = card.current_power - GameObject.Find("Melee_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Melee_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+        }
+        else if (card.playable_zone.IndexOf("D") != -1 && card.playable_zone.IndexOf("S") != -1 && !card.player)//si la carta se puede jugar en dos rangos (DS) 
+        {
+            if (Current_Zone == GameObject.Find("Distance_Zone_Enemy"))
+                card.current_power = card.current_power - GameObject.Find("Distance_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Distance_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+            else
+                card.current_power = card.current_power - GameObject.Find("Siege_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Siege_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+        }
+        else if (card.playable_zone.IndexOf("S") != -1 && card.playable_zone.IndexOf("M") != -1 && !card.player)//si la carta se puede jugar en dos rangos (MS)
+        {
+            if (Current_Zone == GameObject.Find("Siege_Zone_Enemy"))
+                card.current_power = card.current_power - GameObject.Find("Siege_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Siege_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+            else
+                card.current_power = card.current_power - GameObject.Find("Melee_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Melee_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+        }
+
+        // si la carta es de un solo rango y es del jugador 2
         else if (card.playable_zone.IndexOf("D") != -1 && !card.player)
         {
-            card.current_power = card.real_power - GameObject.Find("Distance_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Distance_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+            card.current_power = card.current_power - GameObject.Find("Distance_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Distance_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
         }
         else if (card.playable_zone.IndexOf("M") != -1 && !card.player)
         {
-            card.current_power = card.real_power - GameObject.Find("Melee_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Melee_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+            card.current_power = card.current_power - GameObject.Find("Melee_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Melee_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
         }
         else if (card.playable_zone.IndexOf("S") != -1 && !card.player)
         {
-            card.current_power = card.real_power - GameObject.Find("Siege_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Siege_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
+            card.current_power = card.current_power - GameObject.Find("Siege_Zone_Enemy").GetComponent<Scr_DropZone>().weather_effects + GameObject.Find("Siege_Zone_Enemy").GetComponent<Scr_DropZone>().raise_effects;
         }
     }
-    public void Weather(Scr_Card card)
+    public void Weather(Scr_Card card, GameObject Current_Zone)
     {
         Scr_Card Affecting_card = card;
         Scr_Game_Manager Game_Manager = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
@@ -148,7 +197,7 @@ public class Scr_Effects : MonoBehaviour
         }
 
     }
-    public void Clear(Scr_Card card)
+    public void Clear(Scr_Card card , GameObject Current_Zone)
     {
         GameObject weather_zone = GameObject.Find("Weather_Zone");
 
@@ -195,6 +244,7 @@ public class Scr_Effects : MonoBehaviour
                 Main_Objects[0].GetComponent<Scr_Game_Manager>().Deck2.Grave.Add(card);
 
             }
+
             if(obj.gameObject!=null)
             Destroy(obj.gameObject);
 
@@ -235,7 +285,7 @@ public class Scr_Effects : MonoBehaviour
         Main_Objects[0].GetComponent<Scr_Game_Manager>().Power_Update();
 
     }
-    public void Increase(Scr_Card card)
+    public void Increase(Scr_Card card, GameObject Current_Zone)
     {
         Scr_Card Affecting_card = card;
         Scr_Game_Manager Game_Manager = GameObject.Find("Game_Manager").GetComponent<Scr_Game_Manager>();
@@ -450,7 +500,7 @@ public class Scr_Effects : MonoBehaviour
                 }
         }
     }
-    public void Duplicate_Power(Scr_Card card)
+    public void Duplicate_Power(Scr_Card card , GameObject Current_Zone)
     {
         if(card.player) {
             foreach(Transform obj in Main_Objects[1].transform)
@@ -468,7 +518,7 @@ public class Scr_Effects : MonoBehaviour
         } 
         
     }
-    public void Beehive(Scr_Card card)
+    public void Beehive(Scr_Card card , GameObject Current_Zone)
     {
         int cont=1;
         if (card.player)
@@ -508,8 +558,9 @@ public class Scr_Effects : MonoBehaviour
             }
         }
         card.current_power *= cont;
+        Play_Card(card , Current_Zone);
     } 
-    public void Destroy_Best_Card(Scr_Card card)
+    public void Destroy_Best_Card(Scr_Card card , GameObject Current_Zone)
     {
         (int, GameObject) Best_Card = (-1, null);
         #region//getting the best_card
@@ -550,19 +601,22 @@ public class Scr_Effects : MonoBehaviour
 
         }
         #endregion
+
+        Play_Card(card , Current_Zone);//actualizar poder de la ccarta q activo el efcto antes de actualizar el poder del juego en general 
+
         #region //deleting it
-        
+
         if (Best_Card.Item2 == null) //no hay mejor carta
         {
             GameObject Prov_ = GameObject.Find("Game_Manager");
             if (card.player)
             {
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
             }
             else
             {
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
             }
 
@@ -586,7 +640,7 @@ public class Scr_Effects : MonoBehaviour
                 if(card.player)//si quien activo la carta de efecto es el jugador 1 
                 {
                     //actualizar poder jugador 1
-                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Best_Card.Item1 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Best_Card.Item1 + card.current_power;
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
                     //actualizar poder jugador 2
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2;
@@ -599,7 +653,7 @@ public class Scr_Effects : MonoBehaviour
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Best_Card.Item1;
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
                     //actualizar poder jugador 2 
-                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power;
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
                 }
 
@@ -656,7 +710,7 @@ public class Scr_Effects : MonoBehaviour
         #endregion
     }
 
-    public void Destroy_Worst_Card(Scr_Card card)
+    public void Destroy_Worst_Card(Scr_Card card , GameObject Current_Zone)
     {
         (int, GameObject) Worst_Card = (100, null);
         #region//getting the worst_card
@@ -698,18 +752,20 @@ public class Scr_Effects : MonoBehaviour
         }
         #endregion
 
+        Play_Card(card, Current_Zone);
+
         #region //deleting it
         if (Worst_Card.Item2 == null) //no hay mejor carta
         {
             GameObject Prov_ = GameObject.Find("Game_Manager");
             if (card.player)
             {
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
             }
             else
             {
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
             }
 
@@ -731,7 +787,7 @@ public class Scr_Effects : MonoBehaviour
                 Prov_.GetComponent<Scr_Game_Manager>().Deck1.Grave.Add(Worst_Card.Item2.GetComponent<Display_Card>().Card);
                 if(card.player)//si el efecto lo activo el jugador 1
                 {  //actualizar poder jugador 1
-                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Worst_Card.Item1 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Worst_Card.Item1 + card.current_power;
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
                     //el poder del jugador 2 no se actualiza porque se queda igual
                 }
@@ -741,7 +797,7 @@ public class Scr_Effects : MonoBehaviour
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - Worst_Card.Item1;
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
                     //actualizar poder jugador 2
-                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power;
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
                 }
                 Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
@@ -764,7 +820,7 @@ public class Scr_Effects : MonoBehaviour
                 if(card.player)//si activo el efecto el jugador 1
                 {
                     //actualizar poder jugador 1 
-                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power;
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
                     //actualizar poder jugador 2 
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Worst_Card.Item1;
@@ -775,7 +831,7 @@ public class Scr_Effects : MonoBehaviour
                     //no hay q actuaalizar el poder del 1 porque no se afecto
 
                     //actualizar poder jugador 2 
-                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Worst_Card.Item1 + card.real_power;
+                    Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - Worst_Card.Item1 + card.current_power;
                     Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
                 }
 
@@ -790,7 +846,7 @@ public class Scr_Effects : MonoBehaviour
         }
         #endregion
     }
-    public void Destroy_Worst_Enemy_Card(Scr_Card card)
+    public void Destroy_Worst_Enemy_Card(Scr_Card card , GameObject Current_Zone)
     {
         (int, GameObject) Worst_Enemy_Card = (100, null);
         
@@ -817,13 +873,16 @@ public class Scr_Effects : MonoBehaviour
             }
             #endregion
 
+            //actualizar el poder de la carta que activo el efecto antes de aactualizar el poder general 
+            Play_Card(card, Current_Zone);
+
             //eliminando la peor carta del rival 
             GameObject Prov_ = GameObject.Find("Game_Manager");
 
             if (Worst_Enemy_Card.Item2 == null) //no hay peor carta en el rival
             {    
                 ///se actualiza el poder del jugador 2 solamente 
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
                
                 Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
@@ -881,11 +940,13 @@ public class Scr_Effects : MonoBehaviour
             }
             #endregion
 
+            Play_Card(card, Current_Zone);///actualizar el poder de la carta que activo el efecto antes de actualizar el poder general 
+
             GameObject Prov_ = GameObject.Find("Game_Manager");
             if (Worst_Enemy_Card.Item2 == null) //no hay peor carta en el rival
             {
                 ///se actualiza el poder del jugador 1 solamente 
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
 
                 Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
@@ -921,7 +982,7 @@ public class Scr_Effects : MonoBehaviour
         
     }
 
-    public void Get_Card(Scr_Card card)
+    public void Get_Card(Scr_Card card , GameObject Current_Zone)
     {
         GameObject hand;
         if (card.player)
@@ -942,7 +1003,7 @@ public class Scr_Effects : MonoBehaviour
             Prov_.Deck2.Instantiate_Card(1);
         }
     }    
-    public void Destroy_Raw(Scr_Card card)
+    public void Destroy_Raw(Scr_Card card , GameObject Current_Zone)
     {
         (int,GameObject) Smallest_Raw = (10,null);
         for(int i = 1 ; i<=6 ; i++)
@@ -1004,23 +1065,24 @@ public class Scr_Effects : MonoBehaviour
             }
 
             GameObject Prov_ = GameObject.Find("Game_Manager");
+            Play_Card(card, Current_Zone);//actualizar el poder de la carta que activo el efecto antes de actualizar el poder general 
             
             if(player_affected && card.player)//el efecto fue activado por el jugador 1 y afecto al jugador 1
             {
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power - power_to_dif;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power - power_to_dif;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
             }
 
             else if (!player_affected && !card.player)// efecto lo activo el jugador 2 y afecto al juagador 2
             {
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power - power_to_dif;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power - power_to_dif;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
             }
 
             else if(!player_affected && card.player)//el efecto lo activo el jugador 1 y afecto al jugador 2
             {
                 //actualizar el poder de ambos jugadores
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power ;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power ;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
 
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 - power_to_dif;
@@ -1030,7 +1092,7 @@ public class Scr_Effects : MonoBehaviour
             else if (player_affected && !card.player)//el efecto lo activo el jugador 2 y afecto al jugador 1
             {
                 //actualizar el poder de ambos jugadores
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
 
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 - power_to_dif;
@@ -1049,7 +1111,7 @@ public class Scr_Effects : MonoBehaviour
         }
     }
     
-    public void Weather_Invoque(Scr_Card card)
+    public void Weather_Invoque(Scr_Card card, GameObject Current_Zone)
     {
         if(card.player)//activo el efecto el jugador 1
         {
@@ -1059,7 +1121,7 @@ public class Scr_Effects : MonoBehaviour
                 if(obj.GetComponent<Display_Card>().Card.effect == "Weather")
                 {
                     obj.SetParent(GameObject.Find("Weather_Zone").transform);
-                    Weather(obj.GetComponent<Display_Card>().Card);
+                    Weather(obj.GetComponent<Display_Card>().Card , Current_Zone);
                     break;
                 }
             }
@@ -1074,14 +1136,14 @@ public class Scr_Effects : MonoBehaviour
                 {
                     obj.GetComponent<Scr_Drag>().Played = true;
                     obj.SetParent(GameObject.Find("Weather_Zone").transform);
-                    Weather(obj.GetComponent<Display_Card>().Card);
+                    Weather(obj.GetComponent<Display_Card>().Card,Current_Zone);
                     break;
                 }
             }
         }
     }
 
-    public void Average_Power(Scr_Card card)
+    public void Average_Power(Scr_Card card, GameObject Current_Zone)
     {
         int total_power=0;
         int total_cards=0;
@@ -1090,7 +1152,7 @@ public class Scr_Effects : MonoBehaviour
         {
             foreach(Transform obj in Main_Objects[i].transform)
             {
-                if (obj.GetComponent<Display_Card>().Card.unit_type == "G") continue;
+                if (obj.GetComponent<Display_Card>().Card.unit_type == "G" || obj.GetComponent<Display_Card>().Card.card_type == "D") continue;
                 total_cards++;
                 total_power += int.Parse(obj.GetComponent<Display_Card>().Current_Power.text);
             }
@@ -1102,7 +1164,7 @@ public class Scr_Effects : MonoBehaviour
         {
             foreach (Transform obj in Main_Objects[i].transform)
             {
-                if (obj.GetComponent<Display_Card>().Card.unit_type == "G") continue;
+                if (obj.GetComponent<Display_Card>().Card.unit_type == "G" || obj.GetComponent<Display_Card>().Card.card_type == "D") continue;
                 obj.GetComponent<Display_Card>().Card.current_power = average;
             }
         }
