@@ -1002,6 +1002,8 @@ public class Scr_Effects : MonoBehaviour
         {
             Prov_.Deck2.Instantiate_Card(1);
         }
+
+        Play_Card(card, Current_Zone);//acttualizar el poder de la carta que activo el efecto
     }    
     public void Destroy_Raw(Scr_Card card , GameObject Current_Zone)
     {
@@ -1020,10 +1022,10 @@ public class Scr_Effects : MonoBehaviour
         if(Smallest_Raw.Item2 == null)//no hay cartas jugadas en ninguna fila
         {
             GameObject Prov_ = GameObject.Find("Game_Manager");
-
-            if(card.player)//el eefcto fue activado por el jugador 1 
+            Play_Card(card, Current_Zone);//actualizar el poder de la carta que activo el efecto antes de actualizar el poder general 
+            if (card.player)//el eefcto fue activado por el jugador 1 
             {
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p1_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p1.ToString();
 
                 Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
@@ -1036,7 +1038,7 @@ public class Scr_Effects : MonoBehaviour
             }
             else //el efecto lo activo el jugador 2
             {
-                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.real_power;
+                Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2 + card.current_power;
                 Prov_.GetComponent<Scr_Game_Manager>().total_power_p2_t.text = Prov_.GetComponent<Scr_Game_Manager>().total_power_p2.ToString();
 
                 Prov_.GetComponent<Scr_Game_Manager>().turn = !Prov_.GetComponent<Scr_Game_Manager>().turn;
