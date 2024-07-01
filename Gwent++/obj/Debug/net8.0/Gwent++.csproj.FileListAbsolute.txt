@@ -1,0 +1,14 @@
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\Gwent++.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\Gwent++.AssemblyInfoInputs.cache
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\Gwent++.AssemblyInfo.cs
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\Gwent++.csproj.CoreCompileInputs.cache
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\bin\Debug\net8.0\Gwent++.exe
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\bin\Debug\net8.0\Gwent++.deps.json
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\bin\Debug\net8.0\Gwent++.runtimeconfig.json
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\bin\Debug\net8.0\Gwent++.dll
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\bin\Debug\net8.0\Gwent++.pdb
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\Gwent++.dll
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\refint\Gwent++.dll
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\Gwent++.pdb
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\Gwent++.genruntimeconfig.cache
+C:\Users\53555\Documents\Gwent-Pro\Gwent++\obj\Debug\net8.0\ref\Gwent++.dll
