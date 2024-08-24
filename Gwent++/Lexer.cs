@@ -110,7 +110,6 @@ namespace Interpreter;
             Tokens_Regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.Singleline);//creating the regular expression
             this.input_string = input_string;
         }
-
         public List<Token> Tokenize()
         {
             
@@ -154,7 +153,6 @@ namespace Interpreter;
             return tokens;
         }
     
-
     }
     public class Token
     {

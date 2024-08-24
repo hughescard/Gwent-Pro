@@ -25,13 +25,6 @@
                         }
                     }
                 }
-                ++
-                --
-                -
-                *=
-                /=
-                +=
-                -=
                 ";
 
                 Lexer lexer = new Lexer(input);
