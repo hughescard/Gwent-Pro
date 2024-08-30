@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Common;
 using System.Linq.Expressions;
@@ -5,7 +6,7 @@ using System.Linq.Expressions;
 namespace Interpreter;
 
 //AST Structure Implementation
-
+            
 public abstract class ASTNode
 {
 
@@ -14,12 +15,16 @@ public abstract class ASTNode
 #region ProgramNode
 public class ProgramNode: ASTNode
 {
+    public ProgramNode()
+    {
+        Sections = new List<ASTNode>();
+    }
     /// <summary>
     ///aqui en esta lista se guardan todos los hijos del nodo 
     ///program(que seran nodeos de efeccto y carta y considerare
     ///a cada uno como una seccion x eso se llama sections) 
     /// </summary>
-    public List<ASTNode> Sections ;  
+    public List<ASTNode> Sections;  
 }
 #endregion
 
@@ -47,6 +52,12 @@ public class EffectNode: ASTNode
 }                   
 public class ActionBlockNode: ASTNode
 {
+    public ActionBlockNode()
+    {
+        Targets = new AssignmentNode();
+        Context = new AssignmentNode();
+        Statements = new List<StatementNode>();
+    }
     /// <summary>
     /// targetses una variable(que adentro puede tener cualquier tipo de estructura que desconozco) 
     /// que x logica tenian q haber dado en params pero no, la dan aqui asi q toco ponerla como propiedad 
@@ -73,6 +84,10 @@ public class ActionBlockNode: ASTNode
 /// </summary>
 public class CardNode: ASTNode
 {
+    public CardNode()
+    {
+        Range = new List<ExpressionNode>();
+    }
     /// <summary>
     /// el nombre de ;la carta que no se declara como srting ya q se pueden poner creativos y poner 
     /// operacion de concatenacion
@@ -99,32 +114,37 @@ public class CardNode: ASTNode
     public OnActivationNode OnActivation;
 }
 
-public class OnActivationNode 
+public class OnActivationNode:ASTNode
 {
+    public OnActivationNode()
+    {
+        Activations = new List<EffectDeclarationNode>();
+    }
     public List<EffectDeclarationNode> Activations;
 }
 
-public class PostActionNode
+public class EffectDeclarationNode:ASTNode
 {
-    public List<EffectDeclarationNode> Activations;
-}
-
-public class EffectDeclarationNode
-{
+    public EffectDeclarationNode(EffectDeclarationNode parent)
+    {
+        Effect = new List<AssignmentNode>();
+        this.Parent = parent;
+    }
+    public EffectDeclarationNode Parent;
     public List<AssignmentNode> Effect;
     public SelectorNode Selector;
-    public PostActionNode PostAction;
+    public EffectDeclarationNode PostAction;
 }
 
 /// <summary>
 ///en el nodo selector todos los campos son expresiones porque source es un string, single es un booleano
 ///perdicate es una funcion
 /// </summary>
-public class SelectorNode
+public class SelectorNode:ASTNode
 {
     public ExpressionNode Source;
     public ExpressionNode Single;
-    public ExpressionNode Predicate;
+    public PredicateExpressionNode Predicate;
 } 
 
 #endregion 
@@ -136,26 +156,29 @@ public abstract class StatementNode :ASTNode
 }
 public class AssignmentNode: StatementNode
 {
-    /// <summary>
-    /// identifierNode es un nodo terminal que  va a tener sus propiedades especificas que ya vere despues
-    /// </summary>
-    public IdentifierNode Identifier;
-    /// <summary>
-    /// el value de la asignacion no lo pongo directamente como un valor ya q se pueden poner juguetones y 
-    /// expresiones matematicas o las q les de la gana x eso uso expressionNode (polimorfismmo ya despues se
-    /// hara mas especifico que tipo de expresion es)
-    /// </summary>
+    public ExpressionNode Identifier;
     public ExpressionNode Value;
 }
-
+public class CompoundAssignmentNode: AssignmentNode 
+{
+    public Lexer.TokenType Operator;
+}
+public class CompundAssignment: AssignmentNode 
+{
+    Lexer.TokenType simpleOperator;
+}
 public class ForBlockNode: StatementNode
 {
+    public ForBlockNode()
+    {
+        Body = new List<StatementNode>();
+    }
     /// <summary>
     ///Element es el nombre de la variable que va a tener dentro el elemento de la lista x la q esta 
     ///iterando el for(esta variable tiene directamente el elemento de la lista ya q el for en el DSL
     ///es un foreach)
     /// </summary>
-    public IdentifierNode Element;
+    public ExpressionNode Element;
     /// <summary>
     /// CollectionVariable es el nommbre de la lista sobre la q se va a iterar y es un ExpressionNode ya q 
     /// puede ser un identifier o el acceso a una propiedad del identifier q sea otro identifier q guarde 
@@ -170,6 +193,10 @@ public class ForBlockNode: StatementNode
 
 public class WhileBlockNode: StatementNode
 {
+     public WhileBlockNode()
+    {
+        Body = new List<StatementNode>();
+    }
     /// <summary>
     /// Condition es la condicion que permite que el while siga o no(una vez mas se usa polimorfismo ya que
     /// en si la expression es booleanbinaryExpression pero esta hereda de ExpressionNode asi q a ahorrarse
@@ -180,6 +207,11 @@ public class WhileBlockNode: StatementNode
     /// lo mismo q el Body del for
     /// </summary>
     public List<StatementNode> Body;
+}
+
+public class AccesExpressionNode: StatementNode
+{
+    public ExpressionNode Expression;
 }
 
 #endregion 
@@ -195,48 +227,124 @@ public class IdentifierNode: ExpressionNode
     /// identifierNode es un nodo terminal del arbol(hoja) lo q tiene son solo propiedades y no tiene 
     /// ningun otro nodo adentro
     /// </summary>
-    string Name;
+    public string Name{set;get;}
+    public IdentifierNode(string name)
+    {this.Name = name;}
+
+    // public override string ToString()
+    // {
+    //     return $"Name:{Name}";
+    // }
 }
 /// <summary>
 /// los siguientes tres son nodos terminales que lo unico que llevan es valor
 /// </summary>
+public class DataTypeNode: ExpressionNode
+{
+    public Lexer.TokenType DataType;
+    // public override string ToString()
+    // {
+    //     return $"DataType: {DataType.GetType}";
+    // }
+}
 public class StringNode: ExpressionNode
 {
-    string Value;
+    public string Value;
+
+    // public override string ToString()
+    // {
+    //     return $"Value:{Value}";
+    // }
 }
 public class NumberNode :ExpressionNode
 {
-    double Value;
+    public double Value;
 }
 public class BoolNode: ExpressionNode
 {
-    bool Value;
+    public string Value;
+    public bool Real_Value{get;set;}
+    public BoolNode(string value)
+    {
+        this.Value = value;
+        if(Value == "true")Real_Value = true;
+        else Real_Value = false;
+    }
 }
 public class UnaryExpressionNode: ExpressionNode
 {
-    ExpressionNode Operand;
-    Token Operator;
-    bool IsPrefix;
+    public ExpressionNode Operand;
+    public Lexer.TokenType Operator;
+    public bool IsPrefix;
 }
-public class BinaryExpressionNode: ExpressionNode
+public abstract class BinaryExpressionNode: ExpressionNode
 {
-    ExpressionNode Left;
-    ExpressionNode Right;
-    Token Operator;
+    public static Dictionary<Lexer.TokenType, int> Levels = new Dictionary<Lexer.TokenType, int>
+    {
+        { Lexer.TokenType.Plus, 1 },
+        { Lexer.TokenType.Minus, 1 },
+        { Lexer.TokenType.Multiply, 2 },
+        { Lexer.TokenType.Divide, 2 },
+        { Lexer.TokenType.And, 1 },
+        { Lexer.TokenType.Or, 1 },
+        { Lexer.TokenType.EqualValue,1},
+        { Lexer.TokenType.NotEqualValue, 1 },
+        { Lexer.TokenType.LessThan, 1 },
+        { Lexer.TokenType.BiggerThan, 1 },
+        { Lexer.TokenType.LessOrEqualThan, 1 },
+        { Lexer.TokenType.BiggerOrEqualThan, 1 },
+        { Lexer.TokenType.SimpleConcat, 1 },
+        { Lexer.TokenType.CompConcat, 1 }
+    };
+    public ExpressionNode Left;
+    public ExpressionNode Right;
+    public Token Operator;
 }
 public class BooleanBinaryExpressionNode: BinaryExpressionNode
 {
-    ExpressionNode Left;
-    ExpressionNode Right;
-    Token Operator;
+    public ExpressionNode Left;
+    public ExpressionNode Right;
+    public Lexer.TokenType Operator;
 }
 public class NumericBinaryExpressionNode: BinaryExpressionNode
 {
-    ExpressionNode Left;
-    ExpressionNode Right;
-    Token Operator;
+    public ExpressionNode Left;
+    public ExpressionNode Right;
+    public Lexer.TokenType Operator;
 }  
+public class PredicateExpressionNode: ExpressionNode
+{
+    public IdentifierNode Generic_Identifier;
+    public ExpressionNode Filter;
+}
+public class ConcatExpressionNode: BinaryExpressionNode
+{   
+    public ExpressionNode Left;
+    public ExpressionNode Right;
+    public Lexer.TokenType Operator;
+    public bool IsComp;
+}
+public class PropertyAccesNode:ExpressionNode
+{
+    public ExpressionNode Property_Name ;
+    public ExpressionNode Target;
+}
+public class MethodCallNode: ExpressionNode
+{
+    public MethodCallNode()
+    {
+        Arguments = new List<ExpressionNode>();
+    }
+    public ExpressionNode MethodName {set;get;}
+    public List<ExpressionNode> Arguments{get;set;}
+    public ExpressionNode Target{get;set;}  
+}
+public class CollectionIndexingNode: ExpressionNode
+{
+    public ExpressionNode Collection_Name{get;set;}
+    public ExpressionNode Index{get;set;}
 
+}
 #endregion
 
 
