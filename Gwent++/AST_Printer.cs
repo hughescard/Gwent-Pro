@@ -31,7 +31,7 @@ public static class ASTPrinter
         }
         else if (node is EffectNode effectNode)
         {
-            PrintAST(effectNode.Name, indent, false);
+            PrintAST(effectNode.Name!, indent, false);
             
             if(effectNode.Params != null)
             {
@@ -42,7 +42,7 @@ public static class ASTPrinter
                 }
             }
             
-            PrintAST(effectNode.Action, indent, true);
+            PrintAST(effectNode.Action!, indent, true);
         }
         else if (node is ActionBlockNode actionBlockNode)
         {
@@ -55,15 +55,15 @@ public static class ASTPrinter
         }
         else if (node is CardNode cardNode)
         {
-            PrintAST(cardNode.Name, indent, false);
-            PrintAST(cardNode.Type, indent, false);
-            PrintAST(cardNode.Faction, indent, false);
-            PrintAST(cardNode.Power, indent, false);
-            for (int i = 0; i < cardNode.Range.Count; i++)
+            PrintAST(cardNode.Name!, indent, false);
+            PrintAST(cardNode.Type!, indent, false);
+            PrintAST(cardNode.Faction!, indent, false);
+            PrintAST(cardNode.Power!, indent, false);
+            for (int i = 0; i < cardNode.Range!.Count; i++)
             {
                 PrintAST(cardNode.Range[i], indent, i == cardNode.Range.Count - 1);
             }
-            PrintAST(cardNode.OnActivation, indent, true);
+            PrintAST(cardNode.OnActivation!, indent, true);
         }
         else if (node is OnActivationNode onActivationNode)
         {
@@ -74,69 +74,69 @@ public static class ASTPrinter
         }
         else if (node is EffectDeclarationNode effectDeclarationNode)
         {
-            PrintAST(effectDeclarationNode.Selector, indent, false);
-            for (int i = 0; i < effectDeclarationNode.Effect.Count; i++)
+            PrintAST(effectDeclarationNode.Selector!, indent, false);
+            for (int i = 0; i < effectDeclarationNode.Effect!.Count; i++)
             {
                 PrintAST(effectDeclarationNode.Effect[i], indent, false);
             }
-            PrintAST(effectDeclarationNode.PostAction, indent, true);
+            PrintAST(effectDeclarationNode.PostAction!, indent, true);
         }
         else if (node is SelectorNode selectorNode)
         {
-            PrintAST(selectorNode.Source, indent, false);
-            PrintAST(selectorNode.Single, indent, false);
-            PrintAST(selectorNode.Predicate, indent, true);
+            PrintAST(selectorNode.Source!, indent, false);
+            PrintAST(selectorNode.Single!, indent, false);
+            PrintAST(selectorNode.Predicate!, indent, true);
         }
         else if (node is AssignmentNode assignmentNode)
         {
-            PrintAST(assignmentNode.Identifier, indent, false);
-            PrintAST(assignmentNode.Value, indent, true);
+            PrintAST(assignmentNode.Identifier!, indent, false);
+            PrintAST(assignmentNode.Value!, indent, true);
         }
         else if (node is ForBlockNode forBlockNode)
         {
-            PrintAST(forBlockNode.Element, indent, false);
-            PrintAST(forBlockNode.Collection, indent, false);
-            for (int i = 0; i < forBlockNode.Body.Count; i++)
+            PrintAST(forBlockNode.Element!, indent, false);
+            PrintAST(forBlockNode.Collection!, indent, false);
+            for (int i = 0; i < forBlockNode.Body!.Count; i++)
             {
                 PrintAST(forBlockNode.Body[i], indent, i == forBlockNode.Body.Count - 1);
             }
         }
         else if (node is WhileBlockNode whileBlockNode)
         {
-            PrintAST(whileBlockNode.Condition, indent, false);
-            for (int i = 0; i < whileBlockNode.Body.Count; i++)
+            PrintAST(whileBlockNode.Condition!, indent, false);
+            for (int i = 0; i < whileBlockNode.Body!.Count; i++)
             {
                 PrintAST(whileBlockNode.Body[i], indent, i == whileBlockNode.Body.Count - 1);
             }
         }
         else if (node is UnaryExpressionNode unaryExpressionNode)
         {
-            PrintAST(unaryExpressionNode.Operand, indent, true);
+            PrintAST(unaryExpressionNode.Operand!, indent, true);
         }
         else if (node is BinaryExpressionNode binaryExpressionNode)
         {
 
 
-            PrintAST(binaryExpressionNode.Left, indent, false);
-            PrintAST(binaryExpressionNode.Right, indent, true);
+            PrintAST(binaryExpressionNode.Left!, indent, false);
+            PrintAST(binaryExpressionNode.Right!, indent, true);
         }
         else if (node is MethodCallNode methodCallNode)
         {
-            PrintAST(methodCallNode.Target, indent, false);
-            for (int i = 0; i < methodCallNode.Arguments.Count; i++)
+            PrintAST(methodCallNode.Target!, indent, false);
+            for (int i = 0; i < methodCallNode.Arguments!.Count; i++)
             {
                 PrintAST(methodCallNode.Arguments[i], indent, i == methodCallNode.Arguments.Count - 1);
             }
         }
         else if (node is PropertyAccesNode propertyAccesNode)
         {
-            PrintAST(propertyAccesNode.Property_Name, indent, false);
-            PrintAST(propertyAccesNode.Target, indent, true);
+            PrintAST(propertyAccesNode.Property_Name!, indent, false);
+            PrintAST(propertyAccesNode.Target!, indent, true);
         }
         else if (node is CollectionIndexingNode collectionIndexingNode)
         {
-            PrintAST(collectionIndexingNode.Collection_Name, indent, false);
-            PrintAST(collectionIndexingNode.Index, indent, true);
+            PrintAST(collectionIndexingNode.Collection_Name!, indent, false);
+            PrintAST(collectionIndexingNode.Index!, indent, true);
         }
     }
 

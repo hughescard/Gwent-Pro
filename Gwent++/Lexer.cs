@@ -13,28 +13,34 @@ namespace Interpreter;
         {
             // Keywords
             Effect,Card,Name,Params,Action,Type,Faction,Power,Range,OnActivation,EffectKeyword,Selector,PostAction,
-            Source,Single,Predicate,Amount,
+            Source,Single,Predicate,Amount,In,
             // Data Types
             NumberType,StringType,BooleanType,IntType,
             // Symbols
             OpenParen,CloseParen,OpenBrace,CloseBrace,OpenBracket,CloseBracket,Colon,Dot,Comma,Equals,
-            Arrow,LessThan,BiggerThan,LessorEqualThan,BiggerorEqualThan,
+            Arrow,LessThan,BiggerThan,LessOrEqualThan,BiggerOrEqualThan,
             // Identifiers and Literals
             Identifier,Number,String,Boolean,
             // Whitespace
             Whitespace,
             //ContractedOperator
-            ContractOperator,
+            PlusPlus,MinusMinus,PlusEqual,MinusEqual,MultiplyEqual,DivideEqual,
             //Operator
-            Operator,
+            Minus,Plus,Multiply,Divide,
+            //Boolean Operator
+            And , Or, EqualValue,NotEqualValue,
+            
             //Loops
             For,While,
             // Unknown
             Unknown,
             //Comments
             CommentLine,
-            MultiLineComment
-    
+            MultiLineComment,
+            //Concat strings
+            CompConcat,
+            SimpleConcat
+
         }
         public Dictionary<TokenType,string> Tokens_RegexD = new Dictionary<TokenType,string>
         {
@@ -55,20 +61,21 @@ namespace Interpreter;
             { TokenType.Source, @"\bSource\b" },
             { TokenType.Single, @"\bSingle\b" },
             { TokenType.Predicate, @"\bPredicate\b" },
-            { TokenType.Amount, @"\bAmount\b" },
+            { TokenType.In, @"\bin\b" },
+            //{ TokenType.Amount, @"\bAmount\b" },
             // Comments
             { TokenType.MultiLineComment, "/\\*([^*]|[\r\n]|(\\*+([^*/])))*\\*+/" },
             { TokenType.CommentLine, "//.*?\\n" },
             // Numbers
             { TokenType.Number, @"\b\d+(\.\d+)?\b" },
             //Int type
-            { TokenType.IntType, @"\bint\b" },
+            //{ TokenType.IntType, @"\bint\b" },
             // Strings (double-quoted)
             { TokenType.String, @"""[^""]*""" },
             // Data Types
             { TokenType.NumberType, @"\bNumber\b" },
             { TokenType.StringType, @"\bString\b" },
-            { TokenType.BooleanType,@"\bBoolean\b" },
+            { TokenType.BooleanType,@"\bBool\b" },
             // Symbols
             { TokenType.OpenParen, @"\(" },
             { TokenType.CloseParen, @"\)" },
@@ -76,15 +83,17 @@ namespace Interpreter;
             { TokenType.CloseBrace, @"\}" },
             { TokenType.OpenBracket, @"\[" },
             { TokenType.CloseBracket, @"\]" },
+            { TokenType.EqualValue, @"==" },
             { TokenType.Arrow, @"=>"},
             { TokenType.Colon, @":" },
             { TokenType.Comma, @"," },
             { TokenType.Dot, @"\." },
-            { TokenType.Equals, @"=" },
+            { TokenType.LessOrEqualThan, "<=" },
+            { TokenType.BiggerOrEqualThan, ">=" },   
             { TokenType.LessThan, "<" },
             { TokenType.BiggerThan, ">" },
-            { TokenType.LessorEqualThan, "<=" },
-            { TokenType.BiggerorEqualThan, ">=" },   
+            { TokenType.CompConcat, @"@@"},
+            { TokenType.SimpleConcat, @"@"},
             //Loops
             { TokenType.For, @"\bfor\b"},
             { TokenType.While, @"\bwhile\b"},
@@ -92,10 +101,25 @@ namespace Interpreter;
             { TokenType.Boolean, @"\b(true|false)\b" },
             // Whitespace
             { TokenType.Whitespace, @"\s+"},
+            //Operators
             //Contract Operator 
-            { TokenType.ContractOperator, @"\+\+|--|\+=|-=|/=|\*=" },
+            {TokenType.PlusPlus,@"\+\+" },
+            {TokenType.MinusMinus, @"\-\-"},
+            {TokenType.PlusEqual, @"\+="},
+            {TokenType.MinusEqual, @"\-="},
+            {TokenType.MultiplyEqual, @"\*="},
+            {TokenType.DivideEqual, @"/="},
             //Operator
-            {TokenType.Operator, @"[+\-*/]" },
+            { TokenType.Equals, @"=" },
+            {TokenType.Plus, @"\+"},
+            {TokenType.Minus, @"\-"},
+            {TokenType.Multiply, @"\*"},
+            {TokenType.Divide, @"\/"},
+            //Boolean Operators
+            {TokenType.And, @"&&"},
+            {TokenType.Or, @"\|\|"},
+            {TokenType.NotEqualValue, @"!=" },
+            
             // Identifiers
             { TokenType.Identifier, @"[a-zA-Z_][\w]*"},
             //Unknown
@@ -144,7 +168,7 @@ namespace Interpreter;
                             else
                                 column++;
                         }
-                        if(tokenType != TokenType.Whitespace)
+                        if(tokenType != TokenType.Whitespace && tokenType != TokenType.CommentLine && tokenType != TokenType.MultiLineComment && tokenType != TokenType.Unknown)
                             tokens.Add(new Token(tokenType, value, tokenRow, tokenColumn));
                         break;
                     }

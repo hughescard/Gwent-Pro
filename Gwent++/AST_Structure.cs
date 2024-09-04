@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Common;
 using System.Linq.Expressions;
+using interpreter;
 
 namespace Interpreter;
 
@@ -9,7 +10,7 @@ namespace Interpreter;
             
 public abstract class ASTNode
 {
-
+    public abstract void Accept(IVisitor visitor,Scope scope);
 }
 
 #region ProgramNode
@@ -24,7 +25,12 @@ public class ProgramNode: ASTNode
     ///program(que seran nodeos de efeccto y carta y considerare
     ///a cada uno como una seccion x eso se llama sections) 
     /// </summary>
-    public List<ASTNode> Sections;  
+    public List<ASTNode> Sections;
+
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitProgramNode(this,scope);
+    }
 }
 #endregion
 
@@ -36,19 +42,23 @@ public class EffectNode: ASTNode
     ///para usar el polimorfismo y asi no tener q tener en mente q tipo de expresion es especificamente
     ///(ya sea string o concatenacion de string o cualquier ootra que este erronea))                           
     /// </summary>
-    public ExpressionNode Name;
+    public ExpressionNode? Name;
     /// <summary>
     /// Params es en el DSL una lista de identifiers a los que les asigno el tipo de variable que van a
     /// hacer y el valor de este identifier lo toma despues en la carta que vaya a usar este efecto y 
     /// ahi se asigna el valor del param  
     /// </summary>
-    public List<AssignmentNode> Params;
+    public List<AssignmentNode>? Params;
     /// <summary>
     /// action es un bloque ya que aqui es donde como tal se programa lo que hace el efecto y
     /// tendra tanto expresiones como asignaciones de todos los tipos
     /// </summary>
-    public ActionBlockNode Action;
+    public ActionBlockNode? Action;
 
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitEffectNode(this,scope);
+    }
 }                   
 public class ActionBlockNode: ASTNode
 {
@@ -73,6 +83,10 @@ public class ActionBlockNode: ASTNode
     /// </summary>
     public List<StatementNode> Statements;
 
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+       visitor.VisitActionBlockNode(this,scope);
+    }
 }
 #endregion
 
@@ -92,26 +106,31 @@ public class CardNode: ASTNode
     /// el nombre de ;la carta que no se declara como srting ya q se pueden poner creativos y poner 
     /// operacion de concatenacion
     /// </summary>
-    public ExpressionNode Name;
+    public ExpressionNode? Name;
     /// <summary>
     /// el tipo de la carta ya sea oro plata clima lo que sea(se crea como nodo de expression x lo 
     /// mismo que el de arriba)
     /// </summary>
-    public ExpressionNode Type;
+    public ExpressionNode? Type;
     /// <summary>
     /// nombre de la faccion de la carta
     /// </summary>
-    public ExpressionNode Faction;
+    public ExpressionNode? Faction;
     /// <summary>
     /// poder de la carta
     /// </summary>
-    public ExpressionNode Power;
+    public ExpressionNode? Power;
     /// <summary>
     /// el rango de la carta o sea la zona de juego donde se va a poder jugar la carta
     /// </summary>
-    public List<ExpressionNode> Range;
+    public List<ExpressionNode>? Range;
 
-    public OnActivationNode OnActivation;
+    public OnActivationNode? OnActivation;
+
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitCardNode(this,scope);
+    }
 }
 
 public class OnActivationNode:ASTNode
@@ -121,30 +140,44 @@ public class OnActivationNode:ASTNode
         Activations = new List<EffectDeclarationNode>();
     }
     public List<EffectDeclarationNode> Activations;
+
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitOnActivationNode(this,scope);
+    }
 }
 
 public class EffectDeclarationNode:ASTNode
 {
-    public EffectDeclarationNode(EffectDeclarationNode parent)
+    public EffectDeclarationNode(EffectDeclarationNode? parent = null)
     {
         Effect = new List<AssignmentNode>();
         this.Parent = parent;
     }
-    public EffectDeclarationNode Parent;
-    public List<AssignmentNode> Effect;
-    public SelectorNode Selector;
-    public EffectDeclarationNode PostAction;
-}
+    public EffectDeclarationNode? Parent;
+    public List<AssignmentNode>? Effect;
+    public SelectorNode? Selector;
+    public EffectDeclarationNode? PostAction;
 
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitEffectDeclarationNode(this,scope);
+    }
+}
 /// <summary>
 ///en el nodo selector todos los campos son expresiones porque source es un string, single es un booleano
 ///perdicate es una funcion
 /// </summary>
 public class SelectorNode:ASTNode
 {
-    public ExpressionNode Source;
-    public ExpressionNode Single;
-    public PredicateExpressionNode Predicate;
+    public ExpressionNode? Source;
+    public ExpressionNode? Single;
+    public PredicateExpressionNode? Predicate;
+
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitSelectorNode(this,scope);
+    }
 } 
 
 #endregion 
@@ -152,20 +185,25 @@ public class SelectorNode:ASTNode
 #region StatementNode and derivatives
 public abstract class StatementNode :ASTNode
 {
-
+    
 }
 public class AssignmentNode: StatementNode
 {
-    public ExpressionNode Identifier;
-    public ExpressionNode Value;
+    public ExpressionNode? Identifier;
+    public ExpressionNode? Value;
+
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitAssignmentNode(this,scope);
+    }
 }
 public class CompoundAssignmentNode: AssignmentNode 
 {
     public Lexer.TokenType Operator;
-}
-public class CompundAssignment: AssignmentNode 
-{
-    Lexer.TokenType simpleOperator;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitCompoundAssignmentNode(this,scope);
+    }
 }
 public class ForBlockNode: StatementNode
 {
@@ -178,19 +216,23 @@ public class ForBlockNode: StatementNode
     ///iterando el for(esta variable tiene directamente el elemento de la lista ya q el for en el DSL
     ///es un foreach)
     /// </summary>
-    public ExpressionNode Element;
+    public ExpressionNode? Element;
     /// <summary>
     /// CollectionVariable es el nommbre de la lista sobre la q se va a iterar y es un ExpressionNode ya q 
     /// puede ser un identifier o el acceso a una propiedad del identifier q sea otro identifier q guarde 
     /// una coleccion en su value y asi recursivamente
     /// </summary>
-    public ExpressionNode Collection;
+    public ExpressionNode? Collection;
     /// <summary>
     /// Body es el set de instrucciones del for que obviamente son mas statements
     /// </summary>
-    public List<StatementNode> Body;
-}
+    public List<StatementNode>? Body;
 
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitForBlockNode(this,scope);
+    }
+}
 public class WhileBlockNode: StatementNode
 {
      public WhileBlockNode()
@@ -202,16 +244,23 @@ public class WhileBlockNode: StatementNode
     /// en si la expression es booleanbinaryExpression pero esta hereda de ExpressionNode asi q a ahorrarse
     /// trabajo)
     /// </summary>
-    public ExpressionNode Condition;
+    public ExpressionNode? Condition;
     /// <summary>
     /// lo mismo q el Body del for
     /// </summary>
-    public List<StatementNode> Body;
+    public List<StatementNode>? Body;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitWhileBLockNode(this,scope);
+    }
 }
-
 public class AccesExpressionNode: StatementNode
 {
-    public ExpressionNode Expression;
+    public ExpressionNode? Expression;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitAccesExpressionNode(this,scope);
+    }
 }
 
 #endregion 
@@ -219,6 +268,7 @@ public class AccesExpressionNode: StatementNode
 #region ExpressionNode and derivatives
 public abstract class ExpressionNode: ASTNode
 {
+    public string? Value;
 
 }
 public class IdentifierNode: ExpressionNode
@@ -235,6 +285,11 @@ public class IdentifierNode: ExpressionNode
     // {
     //     return $"Name:{Name}";
     // }
+
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitIdentifierNode(this,scope);
+    }
 }
 /// <summary>
 /// los siguientes tres son nodos terminales que lo unico que llevan es valor
@@ -242,27 +297,29 @@ public class IdentifierNode: ExpressionNode
 public class DataTypeNode: ExpressionNode
 {
     public Lexer.TokenType DataType;
-    // public override string ToString()
-    // {
-    //     return $"DataType: {DataType.GetType}";
-    // }
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitDataTypeNode(this,scope);
+    }
 }
 public class StringNode: ExpressionNode
 {
-    public string Value;
 
-    // public override string ToString()
-    // {
-    //     return $"Value:{Value}";
-    // }
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitStringNode(this,scope);
+    }
 }
 public class NumberNode :ExpressionNode
 {
-    public double Value;
+    public new double Value;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitNumberNode(this,scope);
+    }
 }
 public class BoolNode: ExpressionNode
 {
-    public string Value;
     public bool Real_Value{get;set;}
     public BoolNode(string value)
     {
@@ -270,12 +327,20 @@ public class BoolNode: ExpressionNode
         if(Value == "true")Real_Value = true;
         else Real_Value = false;
     }
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitBoolNode(this,scope);
+    }
 }
 public class UnaryExpressionNode: ExpressionNode
 {
-    public ExpressionNode Operand;
-    public Lexer.TokenType Operator;
+    public ExpressionNode? Operand;
+    public Lexer.TokenType? Operator;
     public bool IsPrefix;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitUnaryExpressionNode(this,scope);
+    }
 }
 public abstract class BinaryExpressionNode: ExpressionNode
 {
@@ -296,38 +361,53 @@ public abstract class BinaryExpressionNode: ExpressionNode
         { Lexer.TokenType.SimpleConcat, 1 },
         { Lexer.TokenType.CompConcat, 1 }
     };
-    public ExpressionNode Left;
-    public ExpressionNode Right;
-    public Token Operator;
+    public ExpressionNode? Left;
+    public ExpressionNode? Right;
+    public Token? Operator;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitBinaryExpressionNode(this,scope);
+    }
 }
 public class BooleanBinaryExpressionNode: BinaryExpressionNode
 {
-    public ExpressionNode Left;
-    public ExpressionNode Right;
-    public Lexer.TokenType Operator;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitBooleanBinaryExpressionNode(this,scope);
+    }
 }
 public class NumericBinaryExpressionNode: BinaryExpressionNode
 {
-    public ExpressionNode Left;
-    public ExpressionNode Right;
-    public Lexer.TokenType Operator;
+   public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitNumericBinaryExpressionNode(this,scope);
+    }
 }  
 public class PredicateExpressionNode: ExpressionNode
 {
-    public IdentifierNode Generic_Identifier;
-    public ExpressionNode Filter;
+    public IdentifierNode? Generic_Identifier;
+    public ExpressionNode? Filter;
+    public override void Accept(IVisitor visitor, Scope scope)
+    {
+        visitor.VisitPredicateExpressionNode(this,scope);
+    }
 }
 public class ConcatExpressionNode: BinaryExpressionNode
 {   
-    public ExpressionNode Left;
-    public ExpressionNode Right;
-    public Lexer.TokenType Operator;
     public bool IsComp;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitConcatExpressionNode(this,scope);
+    }
 }
 public class PropertyAccesNode:ExpressionNode
 {
-    public ExpressionNode Property_Name ;
-    public ExpressionNode Target;
+    public ExpressionNode? Property_Name ;
+    public ExpressionNode? Target;
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitPropertyAccesNode(this,scope);
+    }
 }
 public class MethodCallNode: ExpressionNode
 {
@@ -335,14 +415,22 @@ public class MethodCallNode: ExpressionNode
     {
         Arguments = new List<ExpressionNode>();
     }
-    public ExpressionNode MethodName {set;get;}
-    public List<ExpressionNode> Arguments{get;set;}
-    public ExpressionNode Target{get;set;}  
+    public IdentifierNode? MethodName {set;get;}
+    public List<ExpressionNode>? Arguments{get;set;}
+    public ExpressionNode? Target{get;set;} 
+    public override void Accept(IVisitor visitor,Scope scope )
+    {
+        visitor.VisitMethodCallNode(this,scope);
+    } 
 }
 public class CollectionIndexingNode: ExpressionNode
 {
-    public ExpressionNode Collection_Name{get;set;}
-    public ExpressionNode Index{get;set;}
+    public ExpressionNode? Collection_Name{get;set;}
+    public ExpressionNode? Index{get;set;}
+    public override void Accept(IVisitor visitor,Scope scope)
+    {
+        visitor.VisitCollectionIndexingNode(this,scope);
+    }
 
 }
 #endregion

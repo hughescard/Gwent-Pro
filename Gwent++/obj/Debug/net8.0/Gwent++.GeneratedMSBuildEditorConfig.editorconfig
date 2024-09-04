@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Gwent__
-build_property.ProjectDir = C:\Users\53555\Documents\Gwent-Pro\Gwent++\
+build_property.ProjectDir = c:\Users\53555\Documents\Gwent-Pro\Gwent++\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

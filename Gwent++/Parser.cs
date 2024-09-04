@@ -31,7 +31,11 @@ public class Parser
     
     public Token GetNextToken(int amount=1)
     {
-        return position+amount < this.Tokens.Count ? this.Tokens[position+amount] : null;
+        return position+amount < this.Tokens.Count ? this.Tokens[position+amount] : throw new Exception("UnExpected End Of File");
+    }
+    public Token GetPreviousToken()
+    {
+        return this.Tokens[position-1];
     }
     public bool Match(Token token ,Lexer.TokenType expected_type)
     {
@@ -173,6 +177,8 @@ public class Parser
                     while (CurrentToken.Type != Lexer.TokenType.CloseBrace)
                     {
                         effect.Params.Add(Parse_AssignmentNode());
+                        if(effect.Params[effect.Params.Count-1].Value is not DataTypeNode)
+                            throw new Exception($"Se esperaba un Tipo de Dato: \"Number\", \"String\", \"Bool\" y se recibio: {effect.Params[effect.Params.Count-1].Value!} en la fila: {CurrentToken.Row}.");
                     }
                     Consume( Lexer.TokenType.CloseBrace);
                 }
@@ -269,6 +275,7 @@ public class Parser
                     Consume(Lexer.TokenType.Range);
                     Consume(Lexer.TokenType.Colon);
                     Consume(Lexer.TokenType.OpenBracket);
+                    cardNode.Range = new List<ExpressionNode>();
                     while(CurrentToken!=null && CurrentToken.Type!=Lexer.TokenType.CloseBracket)
                     {
                         cardNode.Range.Add(Parse_ExpressionNode());
@@ -284,7 +291,7 @@ public class Parser
                 }                
 
 
-                if(CurrentToken.Type != Lexer.TokenType.CloseBrace)
+                if(CurrentToken != null && CurrentToken.Type != Lexer.TokenType.CloseBrace)
                     Consume( Lexer.TokenType.Comma);
             }
             else 
@@ -304,7 +311,9 @@ public class Parser
         while(CurrentToken!=null && CurrentToken.Type != Lexer.TokenType.CloseBracket)
         {
             //annadir declaracion de efecto a la lista de activaciones
+            //Consume(Lexer.TokenType.OpenBrace);
             onActivationNode.Activations.Add(Parse_EffectDeclarationNode());
+            //Consume(Lexer.TokenType.CloseBrace);
             if(CurrentToken.Type != Lexer.TokenType.CloseBracket)
                 Consume(Lexer.TokenType.Comma);
         }
@@ -315,22 +324,22 @@ public class Parser
 
     }
 
-    public EffectDeclarationNode Parse_EffectDeclarationNode(EffectDeclarationNode parent = null)
+    public EffectDeclarationNode Parse_EffectDeclarationNode(EffectDeclarationNode? parent = null)
     {
         EffectDeclarationNode effectDeclarationNode = new EffectDeclarationNode(parent);
-
+        Consume(Lexer.TokenType.OpenBrace);
         //Azucar Sintactica (revisar el token siguiente para ver si es un string o una llave(caso que se parsea despues de esta condicional))
         if(GetNextToken(2).Type == Lexer.TokenType.String)
         {   
             Consume(Lexer.TokenType.EffectKeyword);
             Consume(Lexer.TokenType.Colon);
+            effectDeclarationNode.Effect = new List<AssignmentNode>();
             effectDeclarationNode.Effect.Add(new AssignmentNode{Identifier = new IdentifierNode("Name"),Value = Parse_ExpressionNode()});
-            Consume (Lexer.TokenType.Comma);
+            Consume (Lexer.TokenType.CloseBrace);
             return effectDeclarationNode;
         }
 
         //se espera token "{"
-        Consume(Lexer.TokenType.OpenBrace);
         //a partir de aqui se esperan los valores de parseEffectDeclaration
         while(CurrentToken!=null && CurrentToken.Type != Lexer.TokenType.CloseBrace)
         {
@@ -344,6 +353,7 @@ public class Parser
                     Consume(Lexer.TokenType.EffectKeyword);
                     Consume(Lexer.TokenType.Colon);
                     Consume(Lexer.TokenType.OpenBrace);
+                    effectDeclarationNode.Effect = new List<AssignmentNode>();
                     while(CurrentToken!=null && CurrentToken.Type != Lexer.TokenType.CloseBrace)
                     {
                         effectDeclarationNode.Effect.Add(Parse_AssignmentNode()); 
@@ -362,12 +372,12 @@ public class Parser
                 {
                     Consume(Lexer.TokenType.PostAction);
                     Consume(Lexer.TokenType.Colon);
-                    Consume(Lexer.TokenType.OpenBrace);
+                    //Consume(Lexer.TokenType.OpenBrace);
                     effectDeclarationNode.PostAction = Parse_EffectDeclarationNode(effectDeclarationNode);
-                    Consume(Lexer.TokenType.CloseBrace);
+                    //Consume(Lexer.TokenType.CloseBrace);
                 }
 
-                if(CurrentToken.Type != Lexer.TokenType.CloseBrace)
+                if(CurrentToken != null && CurrentToken.Type != Lexer.TokenType.CloseBrace)
                     Consume(Lexer.TokenType.Comma);
             }
             //en caso de no coincidir lanzar un error
@@ -426,8 +436,8 @@ public class Parser
                 }
 
                 //si al dar un valor no se recibe el token "}" es porque no se ha terminado de dar valores y se espera una coma para el siguiente o porque hay algun error
-                if(CurrentToken.Type!=Lexer.TokenType.CloseBrace)
-                    Consume(Lexer.TokenType.Comma);
+                //if(CurrentToken.Type!=Lexer.TokenType.CloseBrace)
+                Consume(Lexer.TokenType.Comma);
             }
             else 
             throw new Exception ($"Token inesperado en los valores de ParseSelector, se recibio {CurrentToken}");
@@ -448,17 +458,17 @@ public class Parser
 
         while(CurrentToken!=null && IsBinary_Expr_Operator(CurrentToken.Type) && BinaryExpressionNode.Levels[CurrentToken.Type]>precedence)
         {
-            Lexer.TokenType _operator = CurrentToken.Type;
-            Consume(_operator);
-            ExpressionNode Right = Parse_ExpressionNode(BinaryExpressionNode.Levels[_operator]);
+            Token _operator = CurrentToken;
+            Consume(_operator.Type);
+            ExpressionNode Right = Parse_ExpressionNode(BinaryExpressionNode.Levels[_operator.Type]);
 
-            if(IsBoolean_Operator(_operator))
+            if(IsBoolean_Operator(_operator.Type))
             {
                 Left = new BooleanBinaryExpressionNode{Left = Left , Operator = _operator , Right = Right};
             }
-            else if (IsConcat_Operator(_operator))
+            else if (IsConcat_Operator(_operator.Type))
             {
-                if(_operator == Lexer.TokenType.CompConcat)
+                if(_operator.Type == Lexer.TokenType.CompConcat)
                     Left = new ConcatExpressionNode{Left = Left , Operator = _operator , Right = Right , IsComp = true };
                 else 
                     Left = new ConcatExpressionNode{Left = Left , Operator = _operator , Right = Right , IsComp = false };    
@@ -479,7 +489,7 @@ public class Parser
             Consume(Lexer.TokenType.OpenParen);
             ExpressionNode argument = Parse_ExpressionNode();
             Consume(Lexer.TokenType.CloseParen);
-            expressionNode = new MethodCallNode{Target = null , MethodName = expressionNode , Arguments = new List<ExpressionNode>{argument}};
+            expressionNode = new MethodCallNode{Target = null , MethodName = (IdentifierNode)expressionNode , Arguments = new List<ExpressionNode>{argument}};
         }
 
         while(CurrentToken != null && CurrentToken.Type == Lexer.TokenType.Dot)
@@ -497,7 +507,7 @@ public class Parser
                     arguments.Add(Parse_ExpressionNode());
                 }
                 Consume(Lexer.TokenType.CloseParen);
-                expressionNode = new MethodCallNode{MethodName = propertyName , Arguments = arguments , Target = expressionNode}; 
+                expressionNode = new MethodCallNode{MethodName = (IdentifierNode)propertyName , Arguments = arguments , Target = expressionNode}; 
             }
             //acceso a propiedad
             else 
@@ -766,6 +776,7 @@ public class Parser
         if(Match(CurrentToken,Lexer.TokenType.OpenBrace))
         {
             Consume(Lexer.TokenType.OpenBrace);
+            forBlockNode.Body = new List<StatementNode>();
             while(CurrentToken != null && CurrentToken.Type != Lexer.TokenType.CloseBrace)
             {
                 forBlockNode.Body.Add(Parse_StatementNode());
@@ -773,8 +784,11 @@ public class Parser
             Consume(Lexer.TokenType.CloseBrace);
 
         }
-        else 
+        else
+        {
+            forBlockNode.Body = new List<StatementNode>();
             forBlockNode.Body.Add(Parse_StatementNode());
+        } 
 
         return forBlockNode;
     
@@ -790,6 +804,7 @@ public class Parser
         if(Match(CurrentToken,Lexer.TokenType.OpenBrace))
         {
             Consume(Lexer.TokenType.OpenBrace);
+            whileBlockNode.Body = new List<StatementNode>();
             while(CurrentToken != null && CurrentToken.Type != Lexer.TokenType.CloseBrace)
             {
                 whileBlockNode.Body.Add(Parse_StatementNode());
@@ -798,7 +813,10 @@ public class Parser
 
         }
         else 
+        {
+            whileBlockNode.Body = new List<StatementNode>();
             whileBlockNode.Body.Add(Parse_StatementNode());
+        }
 
         return whileBlockNode;
     }
